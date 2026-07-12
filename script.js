@@ -28,10 +28,15 @@ const critChanceStatEl = document.getElementById("critChanceStat");
 const criticalHitTextEl = document.getElementById("criticalHitText");
 const statusTextEl = document.getElementById("statusText");
 const milestonesClaimedEl = document.getElementById("milestonesClaimed");
+const permanentTapBonusEl = document.getElementById("permanentTapBonus");
 const mineButton = document.getElementById("mineButton");
 const buyTapUpgradeButton = document.getElementById("buyTapUpgrade");
 const buyMinerButton = document.getElementById("buyMiner");
 const resetButton = document.getElementById("resetButton");
+const milestonesTab = document.getElementById("milestonesTab");
+const rewardsTab = document.getElementById("rewardsTab");
+const milestonesPanel = document.getElementById("milestonesPanel");
+const rewardsPanel = document.getElementById("rewardsPanel");
 
 const milestoneElements = {
   tapApprentice: {
@@ -48,6 +53,17 @@ const milestoneElements = {
     card: document.getElementById("milestoneCrewBoss"),
     bar: document.getElementById("minerMilestoneBar"),
     text: document.getElementById("minerMilestoneText")
+  }
+};
+
+const rewardElements = {
+  tapApprentice: {
+    card: document.getElementById("tapApprenticeReward"),
+    status: document.getElementById("tapApprenticeRewardStatus")
+  },
+  crewBoss: {
+    card: document.getElementById("crewBossReward"),
+    status: document.getElementById("crewBossRewardStatus")
   }
 };
 
@@ -68,6 +84,17 @@ function formatNumber(value) {
   return `${compact.toFixed(compact >= 100 ? 0 : compact >= 10 ? 1 : 2)}${units[unitIndex]}`;
 }
 
+function setActiveProgressTab(tabName) {
+  const showMilestones = tabName === "milestones";
+
+  milestonesTab.classList.toggle("active", showMilestones);
+  rewardsTab.classList.toggle("active", !showMilestones);
+  milestonesTab.setAttribute("aria-selected", String(showMilestones));
+  rewardsTab.setAttribute("aria-selected", String(!showMilestones));
+  milestonesPanel.hidden = !showMilestones;
+  rewardsPanel.hidden = showMilestones;
+}
+
 function setMilestoneProgress(key, current, target, unit) {
   const milestone = milestoneElements[key];
   const claimed = game.milestones[key];
@@ -80,6 +107,15 @@ function setMilestoneProgress(key, current, target, unit) {
     : `${formatNumber(current)} / ${formatNumber(target)} ${unit}`;
 }
 
+function setRewardStatus(key) {
+  const reward = rewardElements[key];
+  const unlocked = game.milestones[key];
+
+  reward.card.classList.toggle("unlocked", unlocked);
+  reward.card.classList.toggle("locked", !unlocked);
+  reward.status.textContent = unlocked ? "Unlocked" : "Locked";
+}
+
 function renderMilestones() {
   const claimedCount = Object.values(game.milestones).filter(Boolean).length;
   milestonesClaimedEl.textContent = claimedCount;
@@ -87,6 +123,16 @@ function renderMilestones() {
   setMilestoneProgress("tapApprentice", game.totalTaps, 25, "taps");
   setMilestoneProgress("goldCollector", game.lifetimeGold, 250, "gold");
   setMilestoneProgress("crewBoss", game.miners, 5, "miners");
+}
+
+function renderPermanentRewards() {
+  const permanentTapBonus =
+    (game.milestones.tapApprentice ? 1 : 0) +
+    (game.milestones.crewBoss ? 2 : 0);
+
+  permanentTapBonusEl.textContent = permanentTapBonus;
+  setRewardStatus("tapApprentice");
+  setRewardStatus("crewBoss");
 }
 
 function render() {
@@ -102,6 +148,7 @@ function render() {
   buyTapUpgradeButton.disabled = game.gold < game.tapUpgradeCost;
   buyMinerButton.disabled = game.gold < game.minerCost;
   renderMilestones();
+  renderPermanentRewards();
 }
 
 function saveGame() {
@@ -270,6 +317,7 @@ function resetGame() {
     lastPlayed: Date.now()
   };
   statusTextEl.textContent = "Save reset. Your progress saves automatically on this device.";
+  setActiveProgressTab("milestones");
   render();
   saveGame();
 }
@@ -278,9 +326,12 @@ mineButton.addEventListener("click", mineGold);
 buyTapUpgradeButton.addEventListener("click", buyTapUpgrade);
 buyMinerButton.addEventListener("click", buyMiner);
 resetButton.addEventListener("click", resetGame);
+milestonesTab.addEventListener("click", () => setActiveProgressTab("milestones"));
+rewardsTab.addEventListener("click", () => setActiveProgressTab("rewards"));
 
 loadGame();
 checkMilestones();
+setActiveProgressTab("milestones");
 render();
 saveGame();
 
