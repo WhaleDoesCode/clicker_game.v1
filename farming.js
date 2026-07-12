@@ -1,6 +1,8 @@
 const FARMING_GROW_TIME_MS = 15000;
 const FARMING_LOG_LIMIT = 6;
 
+const farmingGameTabEl = document.getElementById("farmingGameTab");
+
 const farmingElements = {
   button: document.getElementById("farmActionButton"),
   status: document.getElementById("farmingStatus"),
@@ -157,7 +159,7 @@ function handleFarmAction() {
 }
 
 farmingElements.button.addEventListener("click", handleFarmAction);
-farmingGameTab.addEventListener("click", renderFarming);
+farmingGameTabEl.addEventListener("click", renderFarming);
 resetButton.addEventListener("click", () => {
   ensureFarmingState();
   renderFarming();
