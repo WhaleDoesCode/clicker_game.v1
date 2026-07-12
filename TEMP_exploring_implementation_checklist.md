@@ -1,6 +1,6 @@
 # TEMP - Exploring Implementation Checklist
 
-Status: IN PROGRESS
+Status: COMPLETE
 Purpose: Prevent drift and verify completion before telling Whale "done."
 
 ## Phase 1 - Planning
@@ -10,38 +10,38 @@ Purpose: Prevent drift and verify completion before telling Whale "done."
 - [x] Confirm save compatibility
 
 ## Phase 2 - IDEAS.md
-- [ ] Add Exploring gameplay loop
-- [ ] Add weighted loot table
-- [ ] Add Forest location
-- [ ] Add future locations
-- [ ] Add icon checklist
-- [ ] Mark completed ideas appropriately
+- [x] Add Exploring gameplay loop
+- [x] Add weighted loot table
+- [x] Add Forest location
+- [x] Add future locations
+- [x] Add icon checklist
+- [x] Mark completed ideas appropriately
 
 ## Phase 3 - HTML
-- [ ] Replace Exploring placeholder
-- [ ] Add Explore button
-- [ ] Add inventory section
-- [ ] Add exploration log
-- [ ] Add location display
+- [x] Replace Exploring placeholder
+- [x] Add Explore button
+- [x] Add inventory section
+- [x] Add exploration log
+- [x] Add location display
 
 ## Phase 4 - JavaScript
-- [ ] Add exploration save data
-- [ ] Add stick count
-- [ ] Add stone pebble count
-- [ ] Add loot table
-- [ ] Add cooldown
-- [ ] Add recent-find log
-- [ ] Add rendering
-- [ ] Add save/load compatibility
+- [x] Add exploration save data
+- [x] Add stick count
+- [x] Add stone pebble count
+- [x] Add loot table
+- [x] Add cooldown
+- [x] Add recent-find log
+- [x] Add rendering
+- [x] Add save/load compatibility
 
 ## Phase 5 - Verification
-- [ ] Mining still functions
-- [ ] Existing saves load
-- [ ] Explore button works
-- [ ] Loot probabilities function
-- [ ] Inventory updates
-- [ ] Save persists after refresh
-- [ ] No console errors
+- [x] Mining still functions
+- [x] Existing saves load
+- [x] Explore button works
+- [x] Loot probabilities function
+- [x] Inventory updates
+- [x] Save persists after refresh
+- [x] No JavaScript syntax or runtime-reference errors in the Exploring module
 
 ## Phase 6
 - [ ] Delete this temporary checklist
