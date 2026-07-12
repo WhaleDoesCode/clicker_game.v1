@@ -2,7 +2,13 @@ const EXPLORATION_COOLDOWN_MS = 900;
 const MAX_EXPLORATION_LOG_ENTRIES = 5;
 
 const explorationDefaults = {
-  resources: { sticks: 0, stonePebbles: 0 },
+  resources: {
+    sticks: 0,
+    stonePebbles: 0,
+    hide: 0,
+    leather: 0,
+    leatherBinding: 0
+  },
   exploration: {
     totalTrips: 0,
     currentLocation: "forest",
@@ -13,6 +19,7 @@ const explorationDefaults = {
 
 const sticksCountEl = document.getElementById("sticksCount");
 const stonePebblesCountEl = document.getElementById("stonePebblesCount");
+const hideCountEl = document.getElementById("hideCount");
 const explorationTripsEl = document.getElementById("explorationTrips");
 const exploreButton = document.getElementById("exploreButton");
 const exploreCooldownTextEl = document.getElementById("exploreCooldownText");
@@ -36,11 +43,12 @@ function ensureExplorationState() {
 
 function getExplorationResult() {
   const roll = Math.random();
-  if (roll < 0.35) return { resource: null, amount: 0, message: "The forest was quiet. You found nothing useful." };
-  if (roll < 0.70) return { resource: "sticks", amount: 1, message: "You found a sturdy stick." };
-  if (roll < 0.80) return { resource: "sticks", amount: 2, message: "You gathered two useful sticks." };
-  if (roll < 0.95) return { resource: "stonePebbles", amount: 1, message: "You kicked over a loose stone pebble." };
-  return { resource: "stonePebbles", amount: 2, message: "You found two smooth stone pebbles." };
+  if (roll < 0.30) return { resource: null, amount: 0, message: "The forest was quiet. You found nothing useful." };
+  if (roll < 0.62) return { resource: "sticks", amount: 1, message: "You found a sturdy stick." };
+  if (roll < 0.74) return { resource: "sticks", amount: 2, message: "You gathered two useful sticks." };
+  if (roll < 0.89) return { resource: "stonePebbles", amount: 1, message: "You kicked over a loose stone pebble." };
+  if (roll < 0.96) return { resource: "stonePebbles", amount: 2, message: "You found two smooth stone pebbles." };
+  return { resource: "hide", amount: 1, message: "You discovered a usable animal hide near an old trail." };
 }
 
 function addExplorationLog(message) {
@@ -73,6 +81,7 @@ function renderExploration() {
   ensureExplorationState();
   sticksCountEl.textContent = formatNumber(game.resources.sticks);
   stonePebblesCountEl.textContent = formatNumber(game.resources.stonePebbles);
+  hideCountEl.textContent = formatNumber(game.resources.hide);
   explorationTripsEl.textContent = formatNumber(game.exploration.totalTrips);
   renderExplorationLog();
 
@@ -102,6 +111,7 @@ function exploreForest() {
   addExplorationLog(result.message);
   game.exploration.cooldownUntil = Date.now() + EXPLORATION_COOLDOWN_MS;
   renderExploration();
+  if (typeof renderCrafting === "function") renderCrafting();
   saveGame();
 }
 
@@ -110,6 +120,7 @@ exploringGameTab.addEventListener("click", renderExploration);
 resetButton.addEventListener("click", () => {
   ensureExplorationState();
   renderExploration();
+  if (typeof renderCrafting === "function") renderCrafting();
   saveGame();
 });
 
