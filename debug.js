@@ -83,7 +83,7 @@ function openDebugPanel() {
   removeLegacyDebugShell();
   ensureDebugState();
   syncDebugControls();
-  applyDebugSettings();
+  applyDebugSettings(true);
   debugPanel.hidden = false;
   debugPanel.classList.add("is-open");
   resetDebugTapSequence();
@@ -105,18 +105,38 @@ function registerDebugTap(event) {
 
 function grantCurrentEquipment(amount) {
   ensureDebugState();
+  let changed = false;
+
   Object.keys(game.equipment).forEach((key) => {
-    if (key !== "equippedTool" && typeof game.equipment[key] === "number") {
-      game.equipment[key] = Math.max(game.equipment[key], amount);
+    if (key === "equippedTool" || typeof game.equipment[key] !== "number") return;
+    const nextAmount = Math.max(game.equipment[key], amount);
+    if (nextAmount !== game.equipment[key]) {
+      game.equipment[key] = nextAmount;
+      changed = true;
     }
   });
+
+  return changed;
 }
 
 function completeCurrentMilestones() {
-  game.totalTaps = Math.max(game.totalTaps || 0, 25);
-  game.lifetimeGold = Math.max(game.lifetimeGold || 0, 250);
-  game.miners = Math.max(game.miners || 0, 5);
+  const previous = {
+    totalTaps: game.totalTaps || 0,
+    lifetimeGold: game.lifetimeGold || 0,
+    miners: game.miners || 0,
+    claimed: Object.values(game.milestones || {}).filter(Boolean).length
+  };
+
+  game.totalTaps = Math.max(previous.totalTaps, 25);
+  game.lifetimeGold = Math.max(previous.lifetimeGold, 250);
+  game.miners = Math.max(previous.miners, 5);
   if (typeof checkMilestones === "function") checkMilestones();
+
+  const claimedAfter = Object.values(game.milestones || {}).filter(Boolean).length;
+  return game.totalTaps !== previous.totalTaps ||
+    game.lifetimeGold !== previous.lifetimeGold ||
+    game.miners !== previous.miners ||
+    claimedAfter !== previous.claimed;
 }
 
 function updateUnlockedAreaDisplay() {
@@ -130,6 +150,16 @@ function updateUnlockedAreaDisplay() {
       const status = location.querySelector("span");
       if (status) status.textContent = unlocked ? "Debug unlocked · gameplay coming later" : "Locked";
     }
+  });
+}
+
+function syncFreeCraftingButtons() {
+  if (!game.debugSettings.freeCrafting) return;
+
+  document.querySelectorAll(".recipe-card button[id^='craft']").forEach((button) => {
+    button.disabled = false;
+    const cardTitle = button.closest(".recipe-card")?.querySelector("h2")?.textContent;
+    if (cardTitle) button.textContent = `Debug Craft ${cardTitle}`;
   });
 }
 
@@ -147,21 +177,19 @@ function installFreeCraftingOverride() {
       return originalCraftItem(recipeKey);
     }
 
-    const recipe = window.craftingRecipes?.[recipeKey] || craftingRecipes?.[recipeKey];
-    if (!recipe || !game.equipment || !(recipeKey in game.equipment)) return;
+    const recipe = craftingRecipes?.[recipeKey];
+    if (!recipe || !(recipeKey in game.equipment)) return;
 
     game.equipment[recipeKey] += 1;
-    if (window.craftingElements?.status || craftingElements?.status) {
-      const status = window.craftingElements?.status || craftingElements.status;
-      status.textContent = `Debug crafted ${recipe.name} for free.`;
-    }
+    craftingElements.status.textContent = `Debug crafted ${recipe.name} for free.`;
     if (typeof renderCrafting === "function") renderCrafting();
+    syncFreeCraftingButtons();
     if (typeof renderExploration === "function") renderExploration();
     saveGame();
   };
 }
 
-function applyDebugSettings() {
+function applyDebugSettings(forceRender = false) {
   ensureDebugState();
   const settings = game.debugSettings;
   let changed = false;
@@ -188,18 +216,15 @@ function applyDebugSettings() {
   });
 
   if (settings.unlockAllEquipment) {
-    grantCurrentEquipment(1);
-    changed = true;
+    changed = grantCurrentEquipment(1) || changed;
   }
 
   if (settings.maxToolTier) {
-    grantCurrentEquipment(DEBUG_MAX_CURRENT_EQUIPMENT);
-    changed = true;
+    changed = grantCurrentEquipment(DEBUG_MAX_CURRENT_EQUIPMENT) || changed;
   }
 
   if (settings.completeMilestones) {
-    completeCurrentMilestones();
-    changed = true;
+    changed = completeCurrentMilestones() || changed;
   }
 
   if (settings.noCooldowns && game.exploration?.cooldownUntil) {
@@ -210,18 +235,13 @@ function applyDebugSettings() {
   updateUnlockedAreaDisplay();
   installFreeCraftingOverride();
 
-  if (typeof render === "function") render();
-  if (typeof renderExploration === "function") renderExploration();
-  if (typeof renderCrafting === "function") {
-    renderCrafting();
-    if (settings.freeCrafting) {
-      document.querySelectorAll(".recipe-card button[id^='craft']").forEach((button) => {
-        button.disabled = false;
-        const cardTitle = button.closest(".recipe-card")?.querySelector("h2")?.textContent;
-        if (cardTitle) button.textContent = `Debug Craft ${cardTitle}`;
-      });
-    }
+  if (changed || forceRender) {
+    if (typeof render === "function") render();
+    if (typeof renderExploration === "function") renderExploration();
+    if (typeof renderCrafting === "function") renderCrafting();
   }
+
+  syncFreeCraftingButtons();
 
   if (changed) saveGame();
 }
@@ -232,7 +252,7 @@ function handleDebugToggle(event) {
   if (!key || !(key in DEBUG_DEFAULTS)) return;
 
   game.debugSettings[key] = event.currentTarget.checked;
-  applyDebugSettings();
+  applyDebugSettings(true);
   saveGame();
   setDebugStatus(`${event.currentTarget.closest("label")?.querySelector("span")?.textContent || key}: ${event.currentTarget.checked ? "ON" : "OFF"}`);
 }
@@ -257,6 +277,7 @@ function spawnDebugLoot() {
   if (typeof render === "function") render();
   if (typeof renderExploration === "function") renderExploration();
   if (typeof renderCrafting === "function") renderCrafting();
+  syncFreeCraftingButtons();
   saveGame();
   setDebugStatus("Spawned a loot bundle and 100 gold.");
 }
@@ -297,9 +318,9 @@ function activateDebugControls() {
     if (small) small.textContent = "Ready";
   });
 
-  const actionButtons = [...debugPanel.querySelectorAll(".debug-action")];
-  actionButtons.forEach((button) => {
+  [...debugPanel.querySelectorAll(".debug-action")].forEach((button) => {
     button.disabled = false;
+
     if (button.textContent.trim() === "Save Game") {
       button.addEventListener("click", () => {
         saveGame();
@@ -336,7 +357,7 @@ document.addEventListener("visibilitychange", () => {
 
 activateDebugControls();
 ensureDebugState();
-applyDebugSettings();
+applyDebugSettings(true);
 closeDebugPanel();
 
-window.setInterval(applyDebugSettings, 500);
+window.setInterval(() => applyDebugSettings(false), 500);
