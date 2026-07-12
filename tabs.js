@@ -1,20 +1,9 @@
 const gameSectionTabs = {
-  mining: {
-    button: document.getElementById("miningGameTab"),
-    panel: document.getElementById("miningGamePanel")
-  },
-  farming: {
-    button: document.getElementById("farmingGameTab"),
-    panel: document.getElementById("farmingGamePanel")
-  },
-  exploring: {
-    button: document.getElementById("exploringGameTab"),
-    panel: document.getElementById("exploringGamePanel")
-  },
-  combat: {
-    button: document.getElementById("combatGameTab"),
-    panel: document.getElementById("combatGamePanel")
-  }
+  mining: { button: document.getElementById("miningGameTab"), panel: document.getElementById("miningGamePanel") },
+  farming: { button: document.getElementById("farmingGameTab"), panel: document.getElementById("farmingGamePanel") },
+  exploring: { button: document.getElementById("exploringGameTab"), panel: document.getElementById("exploringGamePanel") },
+  crafting: { button: document.getElementById("craftingGameTab"), panel: document.getElementById("craftingGamePanel") },
+  combat: { button: document.getElementById("combatGameTab"), panel: document.getElementById("combatGamePanel") }
 };
 
 function setActiveGameSection(sectionName) {
@@ -28,6 +17,14 @@ function setActiveGameSection(sectionName) {
   if (sectionName === "mining") {
     checkMilestones();
     render();
+  }
+
+  if (sectionName === "exploring" && typeof renderExploration === "function") {
+    renderExploration();
+  }
+
+  if (sectionName === "crafting" && typeof renderCrafting === "function") {
+    renderCrafting();
   }
 }
 
