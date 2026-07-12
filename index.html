@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111827">
+  <title>Clicker Game</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="game-shell">
+    <header>
+      <p class="eyebrow">Browser Clicker Game</p>
+      <h1>Gold Clicker</h1>
+      <p class="subtitle">Tap for gold, buy upgrades, and let miners work while you are away.</p>
+    </header>
+
+    <section class="score-card" aria-live="polite">
+      <span>Gold</span>
+      <strong id="gold">0</strong>
+      <small><span id="goldPerSecond">0</span> gold per second</small>
+    </section>
+
+    <button id="mineButton" class="mine-button" type="button" aria-label="Mine gold">
+      <span class="coin">🪙</span>
+      <span>Mine Gold</span>
+      <small>+<span id="tapPower">1</span> per tap</small>
+    </button>
+
+    <section class="upgrade-grid">
+      <article class="upgrade-card">
+        <div>
+          <p class="upgrade-label">Tap Power</p>
+          <h2>Stronger Pickaxe</h2>
+          <p>Adds +1 gold to every tap.</p>
+        </div>
+        <button id="buyTapUpgrade" type="button">
+          Buy for <span id="tapCostText">10</span> gold
+        </button>
+      </article>
+
+      <article class="upgrade-card">
+        <div>
+          <p class="upgrade-label">Automatic Income</p>
+          <h2>Hire a Miner</h2>
+          <p>Each miner earns 1 gold every second.</p>
+        </div>
+        <button id="buyMiner" type="button">
+          Buy for <span id="minerCostText">25</span> gold
+        </button>
+      </article>
+    </section>
+
+    <section class="stats-card">
+      <div>
+        <span>Tap power</span>
+        <strong id="tapPowerStat">1</strong>
+      </div>
+      <div>
+        <span>Miners</span>
+        <strong id="miners">0</strong>
+      </div>
+    </section>
+
+    <footer>
+      <p id="statusText">Your progress saves automatically on this device.</p>
+      <button id="resetButton" class="reset-button" type="button">Reset Save</button>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
