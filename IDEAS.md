@@ -4,27 +4,143 @@ This file is the working idea board for the project. Keep rough ideas here befor
 
 ## Current game
 
-- Tap to earn gold.
-- Buy stronger tap power.
-- Hire miners for passive income.
-- Progress saves in the browser with `localStorage`.
-- Critical hits are implemented:
-  - 10% chance per tap.
-  - Critical taps award either 5× or 10× tap rewards.
-  - A quick `CRITICAL!` message appears on the mine button.
-  - `critChance` is stored in the existing save data.
-- Milestones are implemented:
-  - Tap Apprentice: 25 taps rewards permanent +1 tap power.
-  - Gold Collector: 250 lifetime gold rewards +50 gold.
-  - Crew Boss: 5 miners rewards permanent +2 tap power.
-  - Progress, claimed rewards, lifetime gold, and total taps are stored in the existing save data.
-- Current resource icons live in `assets/icons/`:
-  - `iron_ore.png`
-  - `iron_ingot.png`
-  - `gold_ore.png`
-  - `gold_ingot.png`
+- Four main tabs: Mining, Farming, Exploring, and Combat.
+- Mining:
+  - Tap to earn gold.
+  - Buy stronger tap power.
+  - Hire miners for passive income.
+  - Critical hits have a 10% chance and award 5× or 10× tap rewards.
+  - Milestones and permanent rewards are visible and saved.
+- Exploring:
+  - Forest is the first available location.
+  - The Explore button has a short cooldown.
+  - Exploration can award sticks, stone pebbles, or nothing.
+  - Sticks, stone pebbles, trip count, cooldown state, and the recent-find log save in `localStorage`.
+  - Rocky Trail, Old Ruins, and Snowfields are visible as future locked locations.
+- Progress saves in the browser with the existing `clickerGameSaveV1` key.
 
-## Next ideas to discuss
+## Current resource and equipment icons
+
+Canonical icon folder: `assets/icons/`
+
+- `gold_ingot.png`
+- `gold_ore.png`
+- `gold_hoe.png`
+- `gold_sword.png`
+- `hide.png`
+- `iron_ingot.png`
+- `iron_ore.png`
+- `iron_hoe.png`
+- `iron_sword.png`
+- `leather.png`
+- `leather_binding.png`
+- `sticks.png`
+- `stone_pebbles.png`
+- `wooden_hoe.png`
+- `wooden_sword.png`
+
+## Exploring plan
+
+### Implemented first chunk
+
+- [x] Replace the Exploring placeholder with a working Forest screen.
+- [x] Add an Explore button.
+- [x] Add a short cooldown so Exploring feels different from Mining.
+- [x] Add an inventory display for sticks and stone pebbles.
+- [x] Add a recent-find travel log.
+- [x] Save exploration resources and progress without replacing the old save.
+- [x] Show future locked locations.
+
+### Current Forest result table
+
+| Result | Chance |
+| --- | ---: |
+| Nothing | 35% |
+| 1 stick | 35% |
+| 2 sticks | 10% |
+| 1 stone pebble | 15% |
+| 2 stone pebbles | 5% |
+
+### Next Exploring additions
+
+- [ ] Add hide as an uncommon Forest find.
+- [ ] Add herbs and berries as Farming ingredients.
+- [ ] Add a small chance to discover location clues.
+- [ ] Unlock Rocky Trail after a trip or resource milestone.
+- [ ] Give Rocky Trail better stone drops and a coal chance.
+- [ ] Add Old Ruins with treasure, leather binding, and combat encounters.
+- [ ] Add Snowfields with cold-weather resources and equipment requirements.
+- [ ] Add exploration upgrades for luck, cooldown, and carry capacity.
+- [ ] Add exploration milestones and permanent rewards.
+- [ ] Add rare events such as abandoned camps, wounded travelers, and treasure maps.
+
+## Icon checklist for future work
+
+### Already available
+
+- Sticks
+- Stone pebbles
+- Hide
+- Leather
+- Leather binding
+- Wooden sword
+- Iron sword
+- Gold sword
+- Wooden hoe
+- Iron hoe
+- Gold hoe
+- Iron ore
+- Iron ingot
+- Gold ore
+- Gold ingot
+
+### Exploring icons still needed
+
+- Forest location icon
+- Rocky Trail location icon
+- Old Ruins location icon
+- Snowfields location icon
+- Herb bundle
+- Berries
+- Coal
+- Treasure map
+- Location clue or map fragment
+- Small treasure chest
+- Abandoned camp
+- Backpack or carry-capacity icon
+- Exploration boots
+- Compass
+- Lantern or torch
+
+### Farming icons likely needed
+
+- Seeds
+- Wheat
+- Carrot
+- Potato
+- Corn
+- Watering can
+- Soil plot
+- Fertilizer
+- Wooden scythe or sickle
+- Iron scythe or sickle
+- Gold scythe or sickle
+
+### Combat icons likely needed
+
+- Basic enemy or slime
+- Forest wolf
+- Bandit
+- Health potion
+- Shield
+- Helmet
+- Chest armor
+- Boots
+- Ring
+- Damage icon
+- Defense icon
+
+## Next Mining ideas
 
 - [ ] Use `gold_ore.png` for the main mining button.
 - [ ] Add iron as the first mineable resource.
@@ -35,7 +151,7 @@ This file is the working idea board for the project. Keep rough ideas here befor
 - [ ] Add a furnace upgrade.
 - [ ] Add miners assigned to iron or gold.
 - [ ] Add offline production limits and a clearer welcome-back summary.
-- [ ] Add small tap animations and floating `+1` numbers.
+- [ ] Add small tap animations and floating reward numbers.
 
 ## Ten gameplay ideas
 
@@ -46,10 +162,10 @@ This file is the working idea board for the project. Keep rough ideas here befor
    Ore is not instantly valuable. Players feed ore into a smelter that converts it into ingots over time.
 
 3. **Tool tiers**  
-   Wooden pickaxe → stone → iron → gold → fantasy late-game tier, with each tier increasing tap power and possibly critical-hit chance.
+   Wooden → stone → iron → gold → fantasy late-game tier, with stronger gathering and critical-hit bonuses.
 
 4. **Critical hits — IMPLEMENTED**  
-   Every tap has a chance to strike a rich vein and award 5× or 10× resources.
+   Every mining tap has a chance to strike a rich vein and award 5× or 10× resources.
 
 5. **Resource-specific workers**  
    Iron miners gather iron ore, gold miners gather gold ore, and smelters automatically refine both.
@@ -58,67 +174,16 @@ This file is the working idea board for the project. Keep rough ideas here befor
    Start at the surface, then unlock deeper layers with better rewards, higher costs, and new materials.
 
 7. **Random ore veins**  
-   Temporary events such as a Rich Gold Vein appear for 10–30 seconds and provide bonus income while active.
+   Temporary rich veins appear for a limited time and provide bonus income.
 
 8. **Upgrade paths with choices**  
-   Let players specialize in faster tapping, stronger passive income, better smelting, or higher rare-drop chance.
+   Let players specialize in tapping, passive income, smelting, farming, exploration, or combat.
 
 9. **Prestige system**  
-   Reset the mine for permanent Mine Reputation or Prospector Points that improve future runs.
+   Reset progression for permanent reputation or profession points.
 
-10. **Collection and milestones — IMPLEMENTED**  
-    Track taps, lifetime gold, and miners in a visible milestone collection with one-time permanent rewards.
-
-## Possible game loop
-
-1. Mine iron ore by tapping.
-2. Buy better tools with iron ore.
-3. Unlock a furnace.
-4. Smelt iron ore into iron ingots.
-5. Use iron ingots to unlock gold mining.
-6. Mine and smelt gold.
-7. Use gold ingots for stronger late-game upgrades.
-
-## Resource ideas
-
-### Iron
-
-- Iron ore
-- Iron ingot
-- Iron miner
-- Iron pickaxe
-- Iron furnace upgrade
-
-### Gold
-
-- Gold ore
-- Gold ingot
-- Gold miner
-- Gold pickaxe
-- Gold furnace upgrade
-
-## Upgrade ideas
-
-- Pickaxe strength
-- Miner speed
-- Miner capacity
-- Furnace speed
-- Furnace batch size
-- Ore value multiplier
-- Ingot value multiplier
-- Offline production time
-- Critical tap chance
-- Auto-smelting
-
-## UI ideas
-
-- Resource tabs for Iron and Gold.
-- Inventory bar showing all four resources.
-- Large centered resource icon for the active mine.
-- Progress bar toward the next unlock.
-- Upgrade cards grouped by mining, smelting, and automation.
-- Small icon beside each cost.
-- Clear disabled-state text showing what is missing.
+10. **Collection and milestones — IMPLEMENTED FOR MINING**  
+    Track progress in visible milestone collections with one-time and permanent rewards.
 
 ## Save and safety rules
 
@@ -128,26 +193,12 @@ This file is the working idea board for the project. Keep rough ideas here befor
 - Keep reset behind a confirmation prompt.
 - Avoid paid services, databases, and API dependencies.
 - Keep the game deployable through GitHub Pages.
-
-## Decisions made
-
-- The canonical icon folder is `assets/icons/`.
 - Canonical icon names use lowercase snake_case.
-- Current icons:
-  - `iron_ore.png`
-  - `iron_ingot.png`
-  - `gold_ore.png`
-  - `gold_ingot.png`
-
-## Parking lot
-
-Put random ideas here without worrying about order or feasibility.
-
-- 
 
 ## Change log for this file
 
 - 2026-07-12: Created the initial project idea board.
 - 2026-07-12: Added ten gameplay ideas for progression, automation, events, upgrades, prestige, and milestones.
 - 2026-07-12: Implemented critical hits with 5×/10× rewards, visible feedback, and save-compatible `critChance` data.
-- 2026-07-12: Implemented three visible milestones with saved progress and one-time rewards.
+- 2026-07-12: Implemented three visible Mining milestones with saved progress and one-time rewards.
+- 2026-07-12: Added the Exploring roadmap, icon checklist, Forest result table, and first playable Exploring loop.
