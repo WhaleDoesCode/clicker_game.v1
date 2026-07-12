@@ -1,59 +1,89 @@
 const DEBUG_TAPS_REQUIRED = 5;
-const DEBUG_TAP_WINDOW_MS = 2000;
-const DEBUG_MIN_TAP_GAP_MS = 80;
+const DEBUG_TAP_WINDOW_MS = 3000;
+const DEBUG_MIN_TAP_GAP_MS = 160;
+const DEBUG_MAX_PRESS_MS = 700;
 
 const debugHotspot = document.getElementById("debugHotspot");
 const debugPanel = document.getElementById("debugPanel");
 const debugCloseButton = document.getElementById("debugCloseButton");
 const combatGameTab = document.getElementById("combatGameTab");
+
 let debugTapCount = 0;
-let debugTapWindowTimer = null;
-let lastDebugTapAt = 0;
+let debugSequenceTimer = null;
+let lastCountedTapAt = 0;
+let armedPointerId = null;
+let pointerDownAt = 0;
 
 function resetDebugTapSequence() {
   debugTapCount = 0;
-  lastDebugTapAt = 0;
+  lastCountedTapAt = 0;
+  armedPointerId = null;
+  pointerDownAt = 0;
 
-  if (debugTapWindowTimer) {
-    window.clearTimeout(debugTapWindowTimer);
-    debugTapWindowTimer = null;
+  if (debugSequenceTimer) {
+    window.clearTimeout(debugSequenceTimer);
+    debugSequenceTimer = null;
   }
 }
 
-function openDebugPanel() {
-  debugPanel.hidden = false;
-  resetDebugTapSequence();
-  debugPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
-}
-
 function closeDebugPanel() {
+  debugPanel.classList.remove("is-open");
   debugPanel.hidden = true;
   resetDebugTapSequence();
 }
 
-function registerDebugTap(event) {
-  if (event.pointerType && event.isPrimary === false) return;
+function openDebugPanel() {
+  debugPanel.hidden = false;
+  debugPanel.classList.add("is-open");
+  resetDebugTapSequence();
+  debugPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function beginDebugTap(event) {
+  if (!event.isPrimary || event.button !== 0 || armedPointerId !== null) return;
+
+  armedPointerId = event.pointerId;
+  pointerDownAt = performance.now();
+  debugHotspot.setPointerCapture?.(event.pointerId);
+}
+
+function cancelDebugTap(event) {
+  if (event.pointerId !== armedPointerId) return;
+  armedPointerId = null;
+  pointerDownAt = 0;
+}
+
+function finishDebugTap(event) {
+  if (!event.isPrimary || event.pointerId !== armedPointerId) return;
 
   const now = performance.now();
-  if (now - lastDebugTapAt < DEBUG_MIN_TAP_GAP_MS) return;
+  const pressDuration = now - pointerDownAt;
+  armedPointerId = null;
+  pointerDownAt = 0;
 
-  lastDebugTapAt = now;
+  if (pressDuration < 0 || pressDuration > DEBUG_MAX_PRESS_MS) return;
+  if (lastCountedTapAt > 0 && now - lastCountedTapAt < DEBUG_MIN_TAP_GAP_MS) return;
+
+  lastCountedTapAt = now;
   debugTapCount += 1;
 
   if (debugTapCount === 1) {
-    debugTapWindowTimer = window.setTimeout(resetDebugTapSequence, DEBUG_TAP_WINDOW_MS);
+    debugSequenceTimer = window.setTimeout(resetDebugTapSequence, DEBUG_TAP_WINDOW_MS);
   }
 
-  if (debugTapCount >= DEBUG_TAPS_REQUIRED) {
+  if (debugTapCount === DEBUG_TAPS_REQUIRED) {
     openDebugPanel();
   }
 }
 
-debugPanel.hidden = true;
-resetDebugTapSequence();
-debugHotspot.addEventListener("pointerup", registerDebugTap);
+debugHotspot.addEventListener("pointerdown", beginDebugTap);
+debugHotspot.addEventListener("pointerup", finishDebugTap);
+debugHotspot.addEventListener("pointercancel", cancelDebugTap);
+debugHotspot.addEventListener("lostpointercapture", cancelDebugTap);
 debugCloseButton.addEventListener("click", closeDebugPanel);
-combatGameTab.addEventListener("click", resetDebugTapSequence);
+combatGameTab.addEventListener("click", closeDebugPanel);
 document.addEventListener("visibilitychange", () => {
-  if (document.hidden) resetDebugTapSequence();
+  if (document.hidden) closeDebugPanel();
 });
+
+closeDebugPanel();
