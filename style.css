@@ -80,7 +80,7 @@ h1 {
 .score-card,
 .stats-card,
 .upgrade-card,
-.milestones-card {
+.progress-card {
   border: 1px solid rgba(148, 163, 184, 0.2);
   background: rgba(15, 23, 42, 0.78);
   box-shadow: 0 22px 50px rgba(0, 0, 0, 0.28);
@@ -218,10 +218,42 @@ h1 {
   font-size: 1.5rem;
 }
 
-.milestones-card {
+.progress-card {
   margin-top: 16px;
   border-radius: 20px;
-  padding: 18px;
+  padding: 12px;
+}
+
+.progress-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 4px;
+  border-radius: 16px;
+  background: rgba(2, 6, 23, 0.72);
+}
+
+.progress-tab {
+  padding: 11px 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+.progress-tab.active {
+  border-color: rgba(250, 204, 21, 0.45);
+  background: rgba(146, 64, 14, 0.58);
+  color: #fef3c7;
+}
+
+.tab-panel {
+  padding: 6px;
+}
+
+.tab-panel[hidden] {
+  display: none;
 }
 
 .milestones-heading {
@@ -242,12 +274,15 @@ h1 {
   font-size: 1.15rem;
 }
 
-.milestone-list {
+.milestone-list,
+.reward-list {
   display: grid;
   gap: 12px;
 }
 
-.milestone-item {
+.milestone-item,
+.reward-item,
+.reward-summary {
   display: grid;
   gap: 8px;
   border: 1px solid rgba(148, 163, 184, 0.18);
@@ -256,23 +291,30 @@ h1 {
   background: rgba(30, 41, 59, 0.62);
 }
 
-.milestone-item.claimed {
+.milestone-item.claimed,
+.reward-item.unlocked {
   border-color: rgba(250, 204, 21, 0.55);
   background: rgba(113, 63, 18, 0.28);
 }
 
-.milestone-copy {
+.milestone-copy,
+.reward-item > div {
   display: grid;
   gap: 3px;
 }
 
 .milestone-copy span,
-.milestone-item small {
+.milestone-item small,
+.reward-item span,
+.reward-item small,
+.reward-summary span,
+.reward-note {
   color: #94a3b8;
   font-size: 0.82rem;
 }
 
-.milestone-item.claimed small {
+.milestone-item.claimed small,
+.reward-item.unlocked small {
   color: #fde68a;
   font-weight: 800;
 }
@@ -291,6 +333,31 @@ h1 {
   border-radius: inherit;
   background: linear-gradient(90deg, #d97706, #facc15);
   transition: width 180ms ease-out;
+}
+
+.reward-summary {
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.reward-summary strong {
+  color: #fde68a;
+  font-size: 2rem;
+}
+
+.reward-item {
+  grid-template-columns: 1fr auto;
+  align-items: center;
+}
+
+.reward-item.locked {
+  opacity: 0.66;
+}
+
+.reward-note {
+  margin: 12px 2px 0;
+  line-height: 1.45;
 }
 
 footer {
@@ -320,6 +387,10 @@ footer p {
 @media (max-width: 430px) {
   .stats-card {
     grid-template-columns: 1fr;
+  }
+
+  .progress-tab {
+    font-size: 0.82rem;
   }
 }
 
