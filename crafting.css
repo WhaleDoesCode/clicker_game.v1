@@ -1,0 +1,143 @@
+.crafting-panel header {
+  margin-bottom: 18px;
+}
+
+.equipped-card,
+.crafting-inventory article,
+.recipe-card {
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(15, 23, 42, 0.78);
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(14px);
+}
+
+.equipped-card {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
+  border-radius: 20px;
+  padding: 18px;
+}
+
+.equipped-card div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.equipped-card span,
+.equipped-card small,
+.crafting-inventory span,
+.recipe-card p,
+.recipe-card small {
+  color: #94a3b8;
+}
+
+.equipped-card strong {
+  color: #fde68a;
+  font-size: 1.25rem;
+}
+
+.crafting-inventory {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.crafting-inventory article {
+  display: grid;
+  place-items: center;
+  gap: 6px;
+  min-width: 0;
+  border-radius: 16px;
+  padding: 10px 6px;
+  text-align: center;
+}
+
+.crafting-inventory img {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  object-fit: contain;
+  background: rgba(2, 6, 23, 0.52);
+}
+
+.crafting-inventory span {
+  font-size: 0.72rem;
+}
+
+.crafting-inventory strong {
+  font-size: 1.2rem;
+}
+
+.recipe-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.recipe-card {
+  display: grid;
+  grid-template-columns: 82px 1fr;
+  gap: 14px;
+  border-radius: 20px;
+  padding: 16px;
+}
+
+.recipe-card > strong,
+.recipe-card > button {
+  grid-column: 1 / -1;
+}
+
+.recipe-card h2 {
+  margin-bottom: 6px;
+}
+
+.recipe-card p {
+  margin-bottom: 8px;
+  line-height: 1.45;
+}
+
+.recipe-icon {
+  width: 82px;
+  height: 82px;
+  border-radius: 16px;
+  object-fit: contain;
+  background: rgba(2, 6, 23, 0.52);
+}
+
+.recipe-symbol {
+  display: grid;
+  place-items: center;
+  font-size: 2.6rem;
+}
+
+.equip-button {
+  background: rgba(30, 64, 175, 0.78);
+}
+
+.recipe-card button:disabled {
+  opacity: 0.48;
+}
+
+@media (max-width: 620px) {
+  .crafting-inventory {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 680px) {
+  .recipe-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .recipe-card {
+    grid-template-columns: 1fr;
+    align-content: start;
+  }
+
+  .recipe-icon {
+    justify-self: center;
+  }
+}
