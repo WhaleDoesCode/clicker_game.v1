@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="tabs.css">
   <link rel="stylesheet" href="explore.css">
   <link rel="stylesheet" href="crafting.css">
+  <link rel="stylesheet" href="farming.css?v=20260712-1">
   <link rel="stylesheet" href="debug.css?v=20260712-3">
 </head>
 <body>
@@ -42,7 +43,22 @@
       <footer><p id="statusText">Your progress saves automatically on this device.</p><p class="image-credit">Gold ore photo: James St. John, CC BY 2.0, via Wikimedia Commons.</p><button id="resetButton" class="reset-button" type="button">Reset Save</button></footer>
     </section>
 
-    <section id="farmingGamePanel" class="game-panel placeholder-panel" role="tabpanel" aria-labelledby="farmingGameTab" hidden><p class="eyebrow">Coming Next</p><h1>Farming</h1><p>Grow crops, improve fields, and automate harvests.</p></section>
+    <section id="farmingGamePanel" class="game-panel farming-panel" role="tabpanel" aria-labelledby="farmingGameTab" hidden>
+      <header><p class="eyebrow">Field Work</p><h1>Farming</h1><p class="subtitle">Use a Wooden Hoe to plant wheat, wait for it to grow, and harvest crops.</p></header>
+      <section class="farming-summary" aria-label="Farming inventory and progress">
+        <article><div class="crop-symbol" aria-hidden="true">🌾</div><div><span>Wheat</span><strong id="wheatCount">0</strong></div></article>
+        <article><img src="assets/icons/wooden_hoe.png" alt="Wooden hoe"><div><span>Harvests</span><strong id="farmingHarvests">0</strong></div></article>
+      </section>
+      <section id="wheatPlot" class="farming-plot-card" aria-live="polite">
+        <span id="farmingHoeStatus" class="farming-hoe-status">Wooden Hoe required</span>
+        <div class="farming-plot-visual"><span id="wheatPlotIcon" aria-hidden="true">🌱</span></div>
+        <h2 id="wheatPlotTitle">Empty Wheat Plot</h2>
+        <p id="farmingStatus">Craft a Wooden Hoe in the Crafting tab before planting.</p>
+        <button id="farmActionButton" class="farm-action-button" type="button" disabled>Wooden Hoe Required</button>
+        <small id="farmingTimer">Ready to plant.</small>
+      </section>
+      <section class="farming-log-card"><p class="eyebrow">Field Notes</p><h2>Farming Log</h2><ol id="farmingLog" class="farming-log"><li>The field is waiting for its first crop.</li></ol></section>
+    </section>
 
     <section id="exploringGamePanel" class="game-panel explore-panel" role="tabpanel" aria-labelledby="exploringGameTab" hidden>
       <header><p class="eyebrow">Gathering Grounds</p><h1>Exploring</h1><p class="subtitle">Search the Forest for basic materials and clues to new locations.</p></header>
@@ -69,46 +85,23 @@
       <section class="recipe-grid">
         <article class="recipe-card" data-recipe="woodenPickaxe"><div class="recipe-icon recipe-symbol" aria-hidden="true">⛏️</div><div><h2>Wooden Pickaxe</h2><p>Basic mining tool. Crafting unlocks it for equipment use.</p><small id="woodenPickaxeRequirements">Requires 4 sticks and 6 stone pebbles.</small></div><strong>Owned: <span id="woodenPickaxeOwned">0</span></strong><button id="craftWoodenPickaxe" type="button">Craft Wooden Pickaxe</button><button id="equipWoodenPickaxe" class="equip-button" type="button">Equip</button></article>
         <article class="recipe-card" data-recipe="woodenSword"><img class="recipe-icon" src="assets/icons/wooden_sword.png" alt="Wooden sword"><div><h2>Wooden Sword</h2><p>Starter weapon for the future Combat tab.</p><small id="woodenSwordRequirements">Requires 5 sticks and 2 stone pebbles.</small></div><strong>Owned: <span id="woodenSwordOwned">0</span></strong><button id="craftWoodenSword" type="button">Craft Wooden Sword</button><button id="equipWoodenSword" class="equip-button" type="button">Equip</button></article>
-        <article class="recipe-card" data-recipe="woodenHoe"><img class="recipe-icon" src="assets/icons/wooden_hoe.png" alt="Wooden hoe"><div><h2>Wooden Hoe</h2><p>Starter farming tool for the future Farming loop.</p><small id="woodenHoeRequirements">Requires 4 sticks, 3 stone pebbles, and 1 hide.</small></div><strong>Owned: <span id="woodenHoeOwned">0</span></strong><button id="craftWoodenHoe" type="button">Craft Wooden Hoe</button><button id="equipWoodenHoe" class="equip-button" type="button">Equip</button></article>
+        <article class="recipe-card" data-recipe="woodenHoe"><img class="recipe-icon" src="assets/icons/wooden_hoe.png" alt="Wooden hoe"><div><h2>Wooden Hoe</h2><p>Starter farming tool for planting and harvesting wheat.</p><small id="woodenHoeRequirements">Requires 4 sticks, 3 stone pebbles, and 1 hide.</small></div><strong>Owned: <span id="woodenHoeOwned">0</span></strong><button id="craftWoodenHoe" type="button">Craft Wooden Hoe</button><button id="equipWoodenHoe" class="equip-button" type="button">Equip</button></article>
       </section>
     </section>
 
     <section id="combatGamePanel" class="game-panel combat-panel" role="tabpanel" aria-labelledby="combatGameTab" hidden>
-      <p class="eyebrow">Coming Next</p>
-      <h1>Combat</h1>
-      <p>Fight enemies, earn equipment, and grow stronger.</p>
+      <p class="eyebrow">Coming Next</p><h1>Combat</h1><p>Fight enemies, earn equipment, and grow stronger.</p>
       <button id="debugHotspot" class="debug-hotspot" type="button" tabindex="-1" aria-hidden="true"></button>
       <section id="debugPanel" class="debug-panel" hidden>
-        <div class="debug-panel-header">
-          <div><p class="eyebrow">Developer Tools</p><h2>Debug</h2></div>
-          <button id="debugCloseButton" class="debug-close-button" type="button">Close</button>
-        </div>
+        <div class="debug-panel-header"><div><p class="eyebrow">Developer Tools</p><h2>Debug</h2></div><button id="debugCloseButton" class="debug-close-button" type="button">Close</button></div>
         <p>Controls are placeholders only. No debug setting is active yet.</p>
         <details class="debug-group"><summary>Resources</summary><div class="debug-options">
-          <label class="debug-option"><input type="checkbox" disabled><span>Infinite Gold</span><small>Coming soon</small></label>
-          <label class="debug-option"><input type="checkbox" disabled><span>Infinite Wood</span><small>Coming soon</small></label>
-          <label class="debug-option"><input type="checkbox" disabled><span>Infinite Stone</span><small>Coming soon</small></label>
-          <label class="debug-option"><input type="checkbox" disabled><span>Infinite Iron</span><small>Coming soon</small></label>
-          <label class="debug-option"><input type="checkbox" disabled><span>Infinite Hide</span><small>Coming soon</small></label>
-          <label class="debug-option"><input type="checkbox" disabled><span>Infinite Leather</span><small>Coming soon</small></label>
+          <label class="debug-option"><input type="checkbox" disabled><span>Infinite Gold</span><small>Coming soon</small></label><label class="debug-option"><input type="checkbox" disabled><span>Infinite Wood</span><small>Coming soon</small></label><label class="debug-option"><input type="checkbox" disabled><span>Infinite Stone</span><small>Coming soon</small></label><label class="debug-option"><input type="checkbox" disabled><span>Infinite Iron</span><small>Coming soon</small></label><label class="debug-option"><input type="checkbox" disabled><span>Infinite Hide</span><small>Coming soon</small></label><label class="debug-option"><input type="checkbox" disabled><span>Infinite Leather</span><small>Coming soon</small></label>
         </div></details>
-        <details class="debug-group"><summary>Equipment</summary><div class="debug-options">
-          <label class="debug-option"><input type="checkbox" disabled><span>Unlock All Equipment</span><small>Coming soon</small></label>
-          <label class="debug-option"><input type="checkbox" disabled><span>Max Tool Tier</span><small>Coming soon</small></label>
-        </div></details>
-        <details class="debug-group"><summary>Progress</summary><div class="debug-options">
-          <label class="debug-option"><input type="checkbox" disabled><span>Complete Milestones</span><small>Coming soon</small></label>
-          <label class="debug-option"><input type="checkbox" disabled><span>Unlock Areas</span><small>Coming soon</small></label>
-        </div></details>
-        <details class="debug-group"><summary>Economy</summary><div class="debug-options">
-          <label class="debug-option"><input type="checkbox" disabled><span>Free Crafting</span><small>Coming soon</small></label>
-          <label class="debug-option"><input type="checkbox" disabled><span>No Cooldowns</span><small>Coming soon</small></label>
-        </div></details>
-        <details class="debug-group"><summary>Testing</summary><div class="debug-options">
-          <button class="debug-action" type="button" disabled>Save Game</button>
-          <button class="debug-action" type="button" disabled>Reload Game</button>
-          <button class="debug-action" type="button" disabled>Spawn Loot</button>
-        </div></details>
+        <details class="debug-group"><summary>Equipment</summary><div class="debug-options"><label class="debug-option"><input type="checkbox" disabled><span>Unlock All Equipment</span><small>Coming soon</small></label><label class="debug-option"><input type="checkbox" disabled><span>Max Tool Tier</span><small>Coming soon</small></label></div></details>
+        <details class="debug-group"><summary>Progress</summary><div class="debug-options"><label class="debug-option"><input type="checkbox" disabled><span>Complete Milestones</span><small>Coming soon</small></label><label class="debug-option"><input type="checkbox" disabled><span>Unlock Areas</span><small>Coming soon</small></label></div></details>
+        <details class="debug-group"><summary>Economy</summary><div class="debug-options"><label class="debug-option"><input type="checkbox" disabled><span>Free Crafting</span><small>Coming soon</small></label><label class="debug-option"><input type="checkbox" disabled><span>No Cooldowns</span><small>Coming soon</small></label></div></details>
+        <details class="debug-group"><summary>Testing</summary><div class="debug-options"><button class="debug-action" type="button" disabled>Save Game</button><button class="debug-action" type="button" disabled>Reload Game</button><button class="debug-action" type="button" disabled>Spawn Loot</button></div></details>
       </section>
     </section>
   </main>
@@ -116,6 +109,7 @@
   <script src="tabs.js?v=20260712-3"></script>
   <script src="explore.js"></script>
   <script src="crafting.js"></script>
+  <script src="farming.js?v=20260712-1"></script>
   <script src="debug.js?v=20260712-5"></script>
 </body>
 </html>
