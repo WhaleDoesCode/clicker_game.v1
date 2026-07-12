@@ -33,6 +33,7 @@ const mineButton = document.getElementById("mineButton");
 const buyTapUpgradeButton = document.getElementById("buyTapUpgrade");
 const buyMinerButton = document.getElementById("buyMiner");
 const resetButton = document.getElementById("resetButton");
+const refreshMilestonesButton = document.getElementById("refreshMilestonesButton");
 const milestonesTab = document.getElementById("milestonesTab");
 const rewardsTab = document.getElementById("rewardsTab");
 const milestonesPanel = document.getElementById("milestonesPanel");
@@ -93,6 +94,10 @@ function setActiveProgressTab(tabName) {
   rewardsTab.setAttribute("aria-selected", String(!showMilestones));
   milestonesPanel.hidden = !showMilestones;
   rewardsPanel.hidden = showMilestones;
+
+  checkMilestones();
+  renderMilestones();
+  renderPermanentRewards();
 }
 
 function setMilestoneProgress(key, current, target, unit) {
@@ -249,6 +254,19 @@ function checkMilestones() {
   return claimedAny;
 }
 
+function refreshMilestones() {
+  const claimedBefore = Object.values(game.milestones).filter(Boolean).length;
+  const claimedNewReward = checkMilestones();
+
+  render();
+  saveGame();
+
+  const claimedAfter = Object.values(game.milestones).filter(Boolean).length;
+  statusTextEl.textContent = claimedNewReward || claimedAfter > claimedBefore
+    ? "Milestones refreshed. New reward claimed."
+    : "Milestones refreshed. Everything is up to date.";
+}
+
 function mineGold() {
   const isCritical = Math.random() < game.critChance;
   const multiplier = isCritical && Math.random() < 0.2 ? 10 : isCritical ? 5 : 1;
@@ -326,6 +344,7 @@ mineButton.addEventListener("click", mineGold);
 buyTapUpgradeButton.addEventListener("click", buyTapUpgrade);
 buyMinerButton.addEventListener("click", buyMiner);
 resetButton.addEventListener("click", resetGame);
+refreshMilestonesButton.addEventListener("click", refreshMilestones);
 milestonesTab.addEventListener("click", () => setActiveProgressTab("milestones"));
 rewardsTab.addEventListener("click", () => setActiveProgressTab("rewards"));
 
