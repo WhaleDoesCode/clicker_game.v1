@@ -67,42 +67,76 @@
       </div>
     </section>
 
-    <section class="milestones-card" aria-labelledby="milestonesTitle">
-      <div class="milestones-heading">
-        <div>
-          <p class="eyebrow">Permanent Rewards</p>
-          <h2 id="milestonesTitle">Milestones</h2>
-        </div>
-        <strong><span id="milestonesClaimed">0</span>/3</strong>
+    <section class="progress-card" aria-label="Progress and rewards">
+      <div class="progress-tabs" role="tablist" aria-label="Progress views">
+        <button id="milestonesTab" class="progress-tab active" type="button" role="tab" aria-selected="true" aria-controls="milestonesPanel">Milestones</button>
+        <button id="rewardsTab" class="progress-tab" type="button" role="tab" aria-selected="false" aria-controls="rewardsPanel">Permanent Rewards</button>
       </div>
 
-      <div class="milestone-list">
-        <article id="milestoneTapApprentice" class="milestone-item">
-          <div class="milestone-copy">
-            <strong>Tap Apprentice</strong>
-            <span>Tap 25 times · Reward: +1 tap power</span>
+      <div id="milestonesPanel" class="tab-panel" role="tabpanel" aria-labelledby="milestonesTab">
+        <div class="milestones-heading">
+          <div>
+            <p class="eyebrow">Progress</p>
+            <h2>Milestones</h2>
           </div>
-          <div class="milestone-progress" aria-hidden="true"><span id="tapMilestoneBar"></span></div>
-          <small id="tapMilestoneText">0 / 25 taps</small>
-        </article>
+          <strong><span id="milestonesClaimed">0</span>/3</strong>
+        </div>
 
-        <article id="milestoneGoldCollector" class="milestone-item">
-          <div class="milestone-copy">
-            <strong>Gold Collector</strong>
-            <span>Earn 250 total gold · Reward: +50 gold</span>
-          </div>
-          <div class="milestone-progress" aria-hidden="true"><span id="goldMilestoneBar"></span></div>
-          <small id="goldMilestoneText">0 / 250 gold</small>
-        </article>
+        <div class="milestone-list">
+          <article id="milestoneTapApprentice" class="milestone-item">
+            <div class="milestone-copy">
+              <strong>Tap Apprentice</strong>
+              <span>Tap 25 times · Reward: +1 tap power</span>
+            </div>
+            <div class="milestone-progress" aria-hidden="true"><span id="tapMilestoneBar"></span></div>
+            <small id="tapMilestoneText">0 / 25 taps</small>
+          </article>
 
-        <article id="milestoneCrewBoss" class="milestone-item">
-          <div class="milestone-copy">
-            <strong>Crew Boss</strong>
-            <span>Hire 5 miners · Reward: +2 tap power</span>
-          </div>
-          <div class="milestone-progress" aria-hidden="true"><span id="minerMilestoneBar"></span></div>
-          <small id="minerMilestoneText">0 / 5 miners</small>
-        </article>
+          <article id="milestoneGoldCollector" class="milestone-item">
+            <div class="milestone-copy">
+              <strong>Gold Collector</strong>
+              <span>Earn 250 total gold · Reward: +50 gold</span>
+            </div>
+            <div class="milestone-progress" aria-hidden="true"><span id="goldMilestoneBar"></span></div>
+            <small id="goldMilestoneText">0 / 250 gold</small>
+          </article>
+
+          <article id="milestoneCrewBoss" class="milestone-item">
+            <div class="milestone-copy">
+              <strong>Crew Boss</strong>
+              <span>Hire 5 miners · Reward: +2 tap power</span>
+            </div>
+            <div class="milestone-progress" aria-hidden="true"><span id="minerMilestoneBar"></span></div>
+            <small id="minerMilestoneText">0 / 5 miners</small>
+          </article>
+        </div>
+      </div>
+
+      <div id="rewardsPanel" class="tab-panel" role="tabpanel" aria-labelledby="rewardsTab" hidden>
+        <div class="reward-summary">
+          <span>Permanent tap-power bonus</span>
+          <strong>+<span id="permanentTapBonus">0</span></strong>
+        </div>
+
+        <div class="reward-list">
+          <article id="tapApprenticeReward" class="reward-item locked">
+            <div>
+              <strong>Tap Apprentice Reward</strong>
+              <span>Permanent +1 tap power</span>
+            </div>
+            <small id="tapApprenticeRewardStatus">Locked</small>
+          </article>
+
+          <article id="crewBossReward" class="reward-item locked">
+            <div>
+              <strong>Crew Boss Reward</strong>
+              <span>Permanent +2 tap power</span>
+            </div>
+            <small id="crewBossRewardStatus">Locked</small>
+          </article>
+        </div>
+
+        <p class="reward-note">Gold Collector gives a one-time +50 gold payout, so it remains listed under Milestones rather than permanent rewards.</p>
       </div>
     </section>
 
