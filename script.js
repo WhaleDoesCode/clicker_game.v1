@@ -7,6 +7,13 @@ let game = {
   tapUpgradeCost: 10,
   minerCost: 25,
   critChance: 0.1,
+  lifetimeGold: 0,
+  totalTaps: 0,
+  milestones: {
+    tapApprentice: false,
+    goldCollector: false,
+    crewBoss: false
+  },
   lastPlayed: Date.now()
 };
 
@@ -20,10 +27,29 @@ const tapPowerStatEl = document.getElementById("tapPowerStat");
 const critChanceStatEl = document.getElementById("critChanceStat");
 const criticalHitTextEl = document.getElementById("criticalHitText");
 const statusTextEl = document.getElementById("statusText");
+const milestonesClaimedEl = document.getElementById("milestonesClaimed");
 const mineButton = document.getElementById("mineButton");
 const buyTapUpgradeButton = document.getElementById("buyTapUpgrade");
 const buyMinerButton = document.getElementById("buyMiner");
 const resetButton = document.getElementById("resetButton");
+
+const milestoneElements = {
+  tapApprentice: {
+    card: document.getElementById("milestoneTapApprentice"),
+    bar: document.getElementById("tapMilestoneBar"),
+    text: document.getElementById("tapMilestoneText")
+  },
+  goldCollector: {
+    card: document.getElementById("milestoneGoldCollector"),
+    bar: document.getElementById("goldMilestoneBar"),
+    text: document.getElementById("goldMilestoneText")
+  },
+  crewBoss: {
+    card: document.getElementById("milestoneCrewBoss"),
+    bar: document.getElementById("minerMilestoneBar"),
+    text: document.getElementById("minerMilestoneText")
+  }
+};
 
 function formatNumber(value) {
   if (value < 1000) {
@@ -42,6 +68,27 @@ function formatNumber(value) {
   return `${compact.toFixed(compact >= 100 ? 0 : compact >= 10 ? 1 : 2)}${units[unitIndex]}`;
 }
 
+function setMilestoneProgress(key, current, target, unit) {
+  const milestone = milestoneElements[key];
+  const claimed = game.milestones[key];
+  const progress = Math.min(100, (current / target) * 100);
+
+  milestone.card.classList.toggle("claimed", claimed);
+  milestone.bar.style.width = `${claimed ? 100 : progress}%`;
+  milestone.text.textContent = claimed
+    ? "Completed · Reward claimed"
+    : `${formatNumber(current)} / ${formatNumber(target)} ${unit}`;
+}
+
+function renderMilestones() {
+  const claimedCount = Object.values(game.milestones).filter(Boolean).length;
+  milestonesClaimedEl.textContent = claimedCount;
+
+  setMilestoneProgress("tapApprentice", game.totalTaps, 25, "taps");
+  setMilestoneProgress("goldCollector", game.lifetimeGold, 250, "gold");
+  setMilestoneProgress("crewBoss", game.miners, 5, "miners");
+}
+
 function render() {
   goldEl.textContent = formatNumber(game.gold);
   goldPerSecondEl.textContent = formatNumber(game.miners);
@@ -54,6 +101,7 @@ function render() {
 
   buyTapUpgradeButton.disabled = game.gold < game.tapUpgradeCost;
   buyMinerButton.disabled = game.gold < game.minerCost;
+  renderMilestones();
 }
 
 function saveGame() {
@@ -70,10 +118,20 @@ function loadGame() {
 
   try {
     const savedGame = JSON.parse(rawSave);
+    const savedMilestones = savedGame.milestones || {};
+
     game = {
       ...game,
-      ...savedGame
+      ...savedGame,
+      milestones: {
+        ...game.milestones,
+        ...savedMilestones
+      }
     };
+
+    if (!Number.isFinite(savedGame.lifetimeGold)) {
+      game.lifetimeGold = game.gold;
+    }
 
     const now = Date.now();
     const secondsAway = Math.max(0, Math.floor((now - game.lastPlayed) / 1000));
@@ -81,6 +139,7 @@ function loadGame() {
 
     if (offlineGold > 0) {
       game.gold += offlineGold;
+      game.lifetimeGold += offlineGold;
       statusTextEl.textContent = `Welcome back. Your miners earned ${formatNumber(offlineGold)} gold while you were away.`;
     }
   } catch (error) {
@@ -96,17 +155,67 @@ function showCriticalHit(multiplier, amount) {
   criticalHitTextEl.classList.add("show");
 }
 
+function claimMilestone(key, message, reward) {
+  if (game.milestones[key]) {
+    return false;
+  }
+
+  game.milestones[key] = true;
+  reward();
+  statusTextEl.textContent = `Milestone complete: ${message}`;
+  return true;
+}
+
+function checkMilestones() {
+  let claimedAny = false;
+
+  if (game.totalTaps >= 25) {
+    claimedAny = claimMilestone(
+      "tapApprentice",
+      "Tap Apprentice — permanent +1 tap power.",
+      () => {
+        game.tapPower += 1;
+      }
+    ) || claimedAny;
+  }
+
+  if (game.lifetimeGold >= 250) {
+    claimedAny = claimMilestone(
+      "goldCollector",
+      "Gold Collector — +50 gold.",
+      () => {
+        game.gold += 50;
+      }
+    ) || claimedAny;
+  }
+
+  if (game.miners >= 5) {
+    claimedAny = claimMilestone(
+      "crewBoss",
+      "Crew Boss — permanent +2 tap power.",
+      () => {
+        game.tapPower += 2;
+      }
+    ) || claimedAny;
+  }
+
+  return claimedAny;
+}
+
 function mineGold() {
   const isCritical = Math.random() < game.critChance;
   const multiplier = isCritical && Math.random() < 0.2 ? 10 : isCritical ? 5 : 1;
   const goldEarned = game.tapPower * multiplier;
 
   game.gold += goldEarned;
+  game.lifetimeGold += goldEarned;
+  game.totalTaps += 1;
 
   if (isCritical) {
     showCriticalHit(multiplier, goldEarned);
   }
 
+  checkMilestones();
   render();
   saveGame();
 }
@@ -131,6 +240,7 @@ function buyMiner() {
   game.gold -= game.minerCost;
   game.miners += 1;
   game.minerCost = Math.ceil(game.minerCost * 1.72);
+  checkMilestones();
   render();
   saveGame();
 }
@@ -150,6 +260,13 @@ function resetGame() {
     tapUpgradeCost: 10,
     minerCost: 25,
     critChance: 0.1,
+    lifetimeGold: 0,
+    totalTaps: 0,
+    milestones: {
+      tapApprentice: false,
+      goldCollector: false,
+      crewBoss: false
+    },
     lastPlayed: Date.now()
   };
   statusTextEl.textContent = "Save reset. Your progress saves automatically on this device.";
@@ -163,12 +280,15 @@ buyMinerButton.addEventListener("click", buyMiner);
 resetButton.addEventListener("click", resetGame);
 
 loadGame();
+checkMilestones();
 render();
 saveGame();
 
 setInterval(() => {
   if (game.miners > 0) {
     game.gold += game.miners;
+    game.lifetimeGold += game.miners;
+    checkMilestones();
     render();
   }
 }, 1000);
