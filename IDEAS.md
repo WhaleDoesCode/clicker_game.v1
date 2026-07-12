@@ -27,6 +27,38 @@ This file is the working idea board for the project. Keep rough ideas here befor
 - [ ] Add offline production limits and a clearer welcome-back summary.
 - [ ] Add small tap animations and floating `+1` numbers.
 
+## Ten gameplay ideas
+
+1. **Two-resource loop**  
+   Mine iron first, smelt it into ingots, then use iron upgrades to unlock gold mining.
+
+2. **Smelter system**  
+   Ore is not instantly valuable. Players feed ore into a smelter that converts it into ingots over time.
+
+3. **Tool tiers**  
+   Wooden pickaxe → stone → iron → gold → fantasy late-game tier, with each tier increasing tap power and possibly critical-hit chance.
+
+4. **Critical hits**  
+   Every tap has a chance to strike a rich vein and award 5× or 10× resources.
+
+5. **Resource-specific workers**  
+   Iron miners gather iron ore, gold miners gather gold ore, and smelters automatically refine both.
+
+6. **Mine depth progression**  
+   Start at the surface, then unlock deeper layers with better rewards, higher costs, and new materials.
+
+7. **Random ore veins**  
+   Temporary events such as a Rich Gold Vein appear for 10–30 seconds and provide bonus income while active.
+
+8. **Upgrade paths with choices**  
+   Let players specialize in faster tapping, stronger passive income, better smelting, or higher rare-drop chance.
+
+9. **Prestige system**  
+   Reset the mine for permanent Mine Reputation or Prospector Points that improve future runs.
+
+10. **Collection and milestones**  
+    Add achievements such as mining 1,000 iron ore, owning 25 miners, or smelting the first gold ingot, each with a permanent reward.
+
 ## Possible game loop
 
 1. Mine iron ore by tapping.
@@ -106,3 +138,4 @@ Put random ideas here without worrying about order or feasibility.
 ## Change log for this file
 
 - 2026-07-12: Created the initial project idea board.
+- 2026-07-12: Added ten gameplay ideas for progression, automation, events, upgrades, prestige, and milestones.
