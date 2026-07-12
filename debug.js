@@ -3,6 +3,13 @@ const DEBUG_TAP_WINDOW_MS = 3000;
 const DEBUG_MIN_TAP_GAP_MS = 160;
 const DEBUG_MAX_PRESS_MS = 700;
 
+function removeLegacyDebugShell() {
+  document.getElementById("combatDebugTrigger")?.remove();
+  document.getElementById("combatDebugPanel")?.remove();
+}
+
+removeLegacyDebugShell();
+
 const debugHotspot = document.getElementById("debugHotspot");
 const debugPanel = document.getElementById("debugPanel");
 const debugCloseButton = document.getElementById("debugCloseButton");
@@ -81,7 +88,10 @@ debugHotspot.addEventListener("pointerup", finishDebugTap);
 debugHotspot.addEventListener("pointercancel", cancelDebugTap);
 debugHotspot.addEventListener("lostpointercapture", cancelDebugTap);
 debugCloseButton.addEventListener("click", closeDebugPanel);
-combatGameTab.addEventListener("click", closeDebugPanel);
+combatGameTab.addEventListener("click", () => {
+  removeLegacyDebugShell();
+  closeDebugPanel();
+});
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) closeDebugPanel();
 });
