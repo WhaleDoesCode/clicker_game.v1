@@ -19,10 +19,6 @@ function setActiveGameSection(sectionName) {
     render();
   }
 
-  if (sectionName === "farming" && typeof renderFarming === "function") {
-    renderFarming();
-  }
-
   if (sectionName === "exploring" && typeof renderExploration === "function") {
     renderExploration();
   }
