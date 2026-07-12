@@ -8,6 +8,11 @@ This file is the working idea board for the project. Keep rough ideas here befor
 - Buy stronger tap power.
 - Hire miners for passive income.
 - Progress saves in the browser with `localStorage`.
+- Critical hits are implemented:
+  - 10% chance per tap.
+  - Critical taps award either 5× or 10× tap rewards.
+  - A quick `CRITICAL!` message appears on the mine button.
+  - `critChance` is stored in the existing save data.
 - Current resource icons live in `assets/icons/`:
   - `iron_ore.png`
   - `iron_ingot.png`
@@ -38,7 +43,7 @@ This file is the working idea board for the project. Keep rough ideas here befor
 3. **Tool tiers**  
    Wooden pickaxe → stone → iron → gold → fantasy late-game tier, with each tier increasing tap power and possibly critical-hit chance.
 
-4. **Critical hits**  
+4. **Critical hits — IMPLEMENTED**  
    Every tap has a chance to strike a rich vein and award 5× or 10× resources.
 
 5. **Resource-specific workers**  
@@ -139,3 +144,4 @@ Put random ideas here without worrying about order or feasibility.
 
 - 2026-07-12: Created the initial project idea board.
 - 2026-07-12: Added ten gameplay ideas for progression, automation, events, upgrades, prestige, and milestones.
+- 2026-07-12: Implemented critical hits with 5×/10× rewards, visible feedback, and save-compatible `critChance` data.
