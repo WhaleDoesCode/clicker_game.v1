@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="tabs.css">
   <link rel="stylesheet" href="explore.css">
   <link rel="stylesheet" href="crafting.css">
+  <link rel="stylesheet" href="debug.css">
 </head>
 <body>
   <main class="game-shell">
@@ -72,11 +73,49 @@
       </section>
     </section>
 
-    <section id="combatGamePanel" class="game-panel placeholder-panel" role="tabpanel" aria-labelledby="combatGameTab" hidden><p class="eyebrow">Coming Next</p><h1>Combat</h1><p>Fight enemies, earn equipment, and grow stronger.</p></section>
+    <section id="combatGamePanel" class="game-panel combat-panel" role="tabpanel" aria-labelledby="combatGameTab" hidden>
+      <p class="eyebrow">Coming Next</p>
+      <h1>Combat</h1>
+      <p>Fight enemies, earn equipment, and grow stronger.</p>
+      <button id="debugHotspot" class="debug-hotspot" type="button" tabindex="-1" aria-hidden="true"></button>
+      <section id="debugPanel" class="debug-panel" hidden>
+        <div class="debug-panel-header">
+          <div><p class="eyebrow">Developer Tools</p><h2>Debug</h2></div>
+          <button id="debugCloseButton" class="debug-close-button" type="button">Close</button>
+        </div>
+        <p>Controls are placeholders only. No debug setting is active yet.</p>
+        <details class="debug-group"><summary>Resources</summary><div class="debug-options">
+          <label class="debug-option"><input type="checkbox" disabled><span>Infinite Gold</span><small>Coming soon</small></label>
+          <label class="debug-option"><input type="checkbox" disabled><span>Infinite Wood</span><small>Coming soon</small></label>
+          <label class="debug-option"><input type="checkbox" disabled><span>Infinite Stone</span><small>Coming soon</small></label>
+          <label class="debug-option"><input type="checkbox" disabled><span>Infinite Iron</span><small>Coming soon</small></label>
+          <label class="debug-option"><input type="checkbox" disabled><span>Infinite Hide</span><small>Coming soon</small></label>
+          <label class="debug-option"><input type="checkbox" disabled><span>Infinite Leather</span><small>Coming soon</small></label>
+        </div></details>
+        <details class="debug-group"><summary>Equipment</summary><div class="debug-options">
+          <label class="debug-option"><input type="checkbox" disabled><span>Unlock All Equipment</span><small>Coming soon</small></label>
+          <label class="debug-option"><input type="checkbox" disabled><span>Max Tool Tier</span><small>Coming soon</small></label>
+        </div></details>
+        <details class="debug-group"><summary>Progress</summary><div class="debug-options">
+          <label class="debug-option"><input type="checkbox" disabled><span>Complete Milestones</span><small>Coming soon</small></label>
+          <label class="debug-option"><input type="checkbox" disabled><span>Unlock Areas</span><small>Coming soon</small></label>
+        </div></details>
+        <details class="debug-group"><summary>Economy</summary><div class="debug-options">
+          <label class="debug-option"><input type="checkbox" disabled><span>Free Crafting</span><small>Coming soon</small></label>
+          <label class="debug-option"><input type="checkbox" disabled><span>No Cooldowns</span><small>Coming soon</small></label>
+        </div></details>
+        <details class="debug-group"><summary>Testing</summary><div class="debug-options">
+          <button class="debug-action" type="button" disabled>Save Game</button>
+          <button class="debug-action" type="button" disabled>Reload Game</button>
+          <button class="debug-action" type="button" disabled>Spawn Loot</button>
+        </div></details>
+      </section>
+    </section>
   </main>
   <script src="script.js"></script>
   <script src="tabs.js"></script>
   <script src="explore.js"></script>
   <script src="crafting.js"></script>
+  <script src="debug.js"></script>
 </body>
 </html>
