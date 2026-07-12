@@ -9,144 +9,171 @@
 </head>
 <body>
   <main class="game-shell">
-    <header>
-      <p class="eyebrow">Browser Clicker Game</p>
-      <h1>Gold Clicker</h1>
-      <p class="subtitle">Tap for gold, buy upgrades, and let miners work while you are away.</p>
-    </header>
+    <nav class="game-tabs" role="tablist" aria-label="Game sections">
+      <button id="miningGameTab" class="game-tab active" type="button" role="tab" aria-selected="true" aria-controls="miningGamePanel">Mining</button>
+      <button id="farmingGameTab" class="game-tab" type="button" role="tab" aria-selected="false" aria-controls="farmingGamePanel">Farming</button>
+      <button id="exploringGameTab" class="game-tab" type="button" role="tab" aria-selected="false" aria-controls="exploringGamePanel">Exploring</button>
+      <button id="combatGameTab" class="game-tab" type="button" role="tab" aria-selected="false" aria-controls="combatGamePanel">Combat</button>
+    </nav>
 
-    <section class="score-card" aria-live="polite">
-      <span>Gold</span>
-      <strong id="gold">0</strong>
-      <small><span id="goldPerSecond">0</span> gold per second</small>
-    </section>
+    <section id="miningGamePanel" class="game-panel" role="tabpanel" aria-labelledby="miningGameTab">
+      <header>
+        <p class="eyebrow">Browser Clicker Game</p>
+        <h1>Gold Clicker</h1>
+        <p class="subtitle">Tap for gold, buy upgrades, and let miners work while you are away.</p>
+      </header>
 
-    <button id="mineButton" class="mine-button" type="button" aria-label="Mine gold">
-      <span id="criticalHitText" class="critical-hit-text" aria-live="polite"></span>
-      <img class="gold-ore-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Gold_%28Dixie_Mine%2C_Idaho_Springs%2C_Colorado%2C_USA%29_1_%2816868343368%29.jpg/330px-Gold_%28Dixie_Mine%2C_Idaho_Springs%2C_Colorado%2C_USA%29_1_%2816868343368%29.jpg" alt="Gold ore specimen">
-      <span>Mine Gold</span>
-      <small>+<span id="tapPower">1</span> per tap</small>
-    </button>
+      <section class="score-card" aria-live="polite">
+        <span>Gold</span>
+        <strong id="gold">0</strong>
+        <small><span id="goldPerSecond">0</span> gold per second</small>
+      </section>
 
-    <section class="upgrade-grid">
-      <article class="upgrade-card">
-        <div>
-          <p class="upgrade-label">Tap Power</p>
-          <h2>Stronger Pickaxe</h2>
-          <p>Adds +1 gold to every tap.</p>
-        </div>
-        <button id="buyTapUpgrade" type="button">
-          Buy for <span id="tapCostText">10</span> gold
-        </button>
-      </article>
+      <button id="mineButton" class="mine-button" type="button" aria-label="Mine gold">
+        <span id="criticalHitText" class="critical-hit-text" aria-live="polite"></span>
+        <img class="gold-ore-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Gold_%28Dixie_Mine%2C_Idaho_Springs%2C_Colorado%2C_USA%29_1_%2816868343368%29.jpg/330px-Gold_%28Dixie_Mine%2C_Idaho_Springs%2C_Colorado%2C_USA%29_1_%2816868343368%29.jpg" alt="Gold ore specimen">
+        <span>Mine Gold</span>
+        <small>+<span id="tapPower">1</span> per tap</small>
+      </button>
 
-      <article class="upgrade-card">
-        <div>
-          <p class="upgrade-label">Automatic Income</p>
-          <h2>Hire a Miner</h2>
-          <p>Each miner earns 1 gold every second.</p>
-        </div>
-        <button id="buyMiner" type="button">
-          Buy for <span id="minerCostText">25</span> gold
-        </button>
-      </article>
-    </section>
-
-    <section class="stats-card">
-      <div>
-        <span>Tap power</span>
-        <strong id="tapPowerStat">1</strong>
-      </div>
-      <div>
-        <span>Miners</span>
-        <strong id="miners">0</strong>
-      </div>
-      <div>
-        <span>Critical chance</span>
-        <strong id="critChanceStat">10%</strong>
-      </div>
-    </section>
-
-    <section class="progress-card" aria-label="Progress and rewards">
-      <div class="progress-tabs" role="tablist" aria-label="Progress views">
-        <button id="milestonesTab" class="progress-tab active" type="button" role="tab" aria-selected="true" aria-controls="milestonesPanel">Milestones</button>
-        <button id="rewardsTab" class="progress-tab" type="button" role="tab" aria-selected="false" aria-controls="rewardsPanel">Permanent Rewards</button>
-      </div>
-
-      <div id="milestonesPanel" class="tab-panel" role="tabpanel" aria-labelledby="milestonesTab">
-        <div class="milestones-heading">
+      <section class="upgrade-grid">
+        <article class="upgrade-card">
           <div>
-            <p class="eyebrow">Progress</p>
-            <h2>Milestones</h2>
+            <p class="upgrade-label">Tap Power</p>
+            <h2>Stronger Pickaxe</h2>
+            <p>Adds +1 gold to every tap.</p>
           </div>
-          <strong><span id="milestonesClaimed">0</span>/3</strong>
+          <button id="buyTapUpgrade" type="button">
+            Buy for <span id="tapCostText">10</span> gold
+          </button>
+        </article>
+
+        <article class="upgrade-card">
+          <div>
+            <p class="upgrade-label">Automatic Income</p>
+            <h2>Hire a Miner</h2>
+            <p>Each miner earns 1 gold every second.</p>
+          </div>
+          <button id="buyMiner" type="button">
+            Buy for <span id="minerCostText">25</span> gold
+          </button>
+        </article>
+      </section>
+
+      <section class="stats-card">
+        <div>
+          <span>Tap power</span>
+          <strong id="tapPowerStat">1</strong>
+        </div>
+        <div>
+          <span>Miners</span>
+          <strong id="miners">0</strong>
+        </div>
+        <div>
+          <span>Critical chance</span>
+          <strong id="critChanceStat">10%</strong>
+        </div>
+      </section>
+
+      <section class="progress-card" aria-label="Progress and rewards">
+        <div class="progress-tabs" role="tablist" aria-label="Progress views">
+          <button id="milestonesTab" class="progress-tab active" type="button" role="tab" aria-selected="true" aria-controls="milestonesPanel">Milestones</button>
+          <button id="rewardsTab" class="progress-tab" type="button" role="tab" aria-selected="false" aria-controls="rewardsPanel">Permanent Rewards</button>
         </div>
 
-        <div class="milestone-list">
-          <article id="milestoneTapApprentice" class="milestone-item">
-            <div class="milestone-copy">
-              <strong>Tap Apprentice</strong>
-              <span>Tap 25 times · Reward: +1 tap power</span>
-            </div>
-            <div class="milestone-progress" aria-hidden="true"><span id="tapMilestoneBar"></span></div>
-            <small id="tapMilestoneText">0 / 25 taps</small>
-          </article>
-
-          <article id="milestoneGoldCollector" class="milestone-item">
-            <div class="milestone-copy">
-              <strong>Gold Collector</strong>
-              <span>Earn 250 total gold · Reward: +50 gold</span>
-            </div>
-            <div class="milestone-progress" aria-hidden="true"><span id="goldMilestoneBar"></span></div>
-            <small id="goldMilestoneText">0 / 250 gold</small>
-          </article>
-
-          <article id="milestoneCrewBoss" class="milestone-item">
-            <div class="milestone-copy">
-              <strong>Crew Boss</strong>
-              <span>Hire 5 miners · Reward: +2 tap power</span>
-            </div>
-            <div class="milestone-progress" aria-hidden="true"><span id="minerMilestoneBar"></span></div>
-            <small id="minerMilestoneText">0 / 5 miners</small>
-          </article>
-        </div>
-
-        <button id="refreshMilestonesButton" type="button">Refresh Milestones</button>
-      </div>
-
-      <div id="rewardsPanel" class="tab-panel" role="tabpanel" aria-labelledby="rewardsTab" hidden>
-        <div class="reward-summary">
-          <span>Permanent tap-power bonus</span>
-          <strong>+<span id="permanentTapBonus">0</span></strong>
-        </div>
-
-        <div class="reward-list">
-          <article id="tapApprenticeReward" class="reward-item locked">
+        <div id="milestonesPanel" class="tab-panel" role="tabpanel" aria-labelledby="milestonesTab">
+          <div class="milestones-heading">
             <div>
-              <strong>Tap Apprentice Reward</strong>
-              <span>Permanent +1 tap power</span>
+              <p class="eyebrow">Progress</p>
+              <h2>Milestones</h2>
             </div>
-            <small id="tapApprenticeRewardStatus">Locked</small>
-          </article>
+            <strong><span id="milestonesClaimed">0</span>/3</strong>
+          </div>
 
-          <article id="crewBossReward" class="reward-item locked">
-            <div>
-              <strong>Crew Boss Reward</strong>
-              <span>Permanent +2 tap power</span>
-            </div>
-            <small id="crewBossRewardStatus">Locked</small>
-          </article>
+          <div class="milestone-list">
+            <article id="milestoneTapApprentice" class="milestone-item">
+              <div class="milestone-copy">
+                <strong>Tap Apprentice</strong>
+                <span>Tap 25 times · Reward: +1 tap power</span>
+              </div>
+              <div class="milestone-progress" aria-hidden="true"><span id="tapMilestoneBar"></span></div>
+              <small id="tapMilestoneText">0 / 25 taps</small>
+            </article>
+
+            <article id="milestoneGoldCollector" class="milestone-item">
+              <div class="milestone-copy">
+                <strong>Gold Collector</strong>
+                <span>Earn 250 total gold · Reward: +50 gold</span>
+              </div>
+              <div class="milestone-progress" aria-hidden="true"><span id="goldMilestoneBar"></span></div>
+              <small id="goldMilestoneText">0 / 250 gold</small>
+            </article>
+
+            <article id="milestoneCrewBoss" class="milestone-item">
+              <div class="milestone-copy">
+                <strong>Crew Boss</strong>
+                <span>Hire 5 miners · Reward: +2 tap power</span>
+              </div>
+              <div class="milestone-progress" aria-hidden="true"><span id="minerMilestoneBar"></span></div>
+              <small id="minerMilestoneText">0 / 5 miners</small>
+            </article>
+          </div>
+
+          <button id="refreshMilestonesButton" type="button">Refresh Milestones</button>
         </div>
 
-        <p class="reward-note">Gold Collector gives a one-time +50 gold payout, so it remains listed under Milestones rather than permanent rewards.</p>
-      </div>
+        <div id="rewardsPanel" class="tab-panel" role="tabpanel" aria-labelledby="rewardsTab" hidden>
+          <div class="reward-summary">
+            <span>Permanent tap-power bonus</span>
+            <strong>+<span id="permanentTapBonus">0</span></strong>
+          </div>
+
+          <div class="reward-list">
+            <article id="tapApprenticeReward" class="reward-item locked">
+              <div>
+                <strong>Tap Apprentice Reward</strong>
+                <span>Permanent +1 tap power</span>
+              </div>
+              <small id="tapApprenticeRewardStatus">Locked</small>
+            </article>
+
+            <article id="crewBossReward" class="reward-item locked">
+              <div>
+                <strong>Crew Boss Reward</strong>
+                <span>Permanent +2 tap power</span>
+              </div>
+              <small id="crewBossRewardStatus">Locked</small>
+            </article>
+          </div>
+
+          <p class="reward-note">Gold Collector gives a one-time +50 gold payout, so it remains listed under Milestones rather than permanent rewards.</p>
+        </div>
+      </section>
+
+      <footer>
+        <p id="statusText">Your progress saves automatically on this device.</p>
+        <p class="image-credit">Gold ore photo: James St. John, CC BY 2.0, via Wikimedia Commons.</p>
+        <button id="resetButton" class="reset-button" type="button">Reset Save</button>
+      </footer>
     </section>
 
-    <footer>
-      <p id="statusText">Your progress saves automatically on this device.</p>
-      <p class="image-credit">Gold ore photo: James St. John, CC BY 2.0, via Wikimedia Commons.</p>
-      <button id="resetButton" class="reset-button" type="button">Reset Save</button>
-    </footer>
+    <section id="farmingGamePanel" class="game-panel placeholder-panel" role="tabpanel" aria-labelledby="farmingGameTab" hidden>
+      <p class="eyebrow">Coming Next</p>
+      <h1>Farming</h1>
+      <p>Grow crops, improve fields, and automate harvests.</p>
+    </section>
+
+    <section id="exploringGamePanel" class="game-panel placeholder-panel" role="tabpanel" aria-labelledby="exploringGameTab" hidden>
+      <p class="eyebrow">Coming Next</p>
+      <h1>Exploring</h1>
+      <p>Discover locations, gather rare materials, and unlock new areas.</p>
+    </section>
+
+    <section id="combatGamePanel" class="game-panel placeholder-panel" role="tabpanel" aria-labelledby="combatGameTab" hidden>
+      <p class="eyebrow">Coming Next</p>
+      <h1>Combat</h1>
+      <p>Fight enemies, earn equipment, and grow stronger.</p>
+    </section>
   </main>
 
   <script src="script.js"></script>
