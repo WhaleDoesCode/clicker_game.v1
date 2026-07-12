@@ -6,6 +6,7 @@ let game = {
   miners: 0,
   tapUpgradeCost: 10,
   minerCost: 25,
+  critChance: 0.1,
   lastPlayed: Date.now()
 };
 
@@ -16,6 +17,8 @@ const minersEl = document.getElementById("miners");
 const tapCostTextEl = document.getElementById("tapCostText");
 const minerCostTextEl = document.getElementById("minerCostText");
 const tapPowerStatEl = document.getElementById("tapPowerStat");
+const critChanceStatEl = document.getElementById("critChanceStat");
+const criticalHitTextEl = document.getElementById("criticalHitText");
 const statusTextEl = document.getElementById("statusText");
 const mineButton = document.getElementById("mineButton");
 const buyTapUpgradeButton = document.getElementById("buyTapUpgrade");
@@ -45,6 +48,7 @@ function render() {
   tapPowerEl.textContent = formatNumber(game.tapPower);
   tapPowerStatEl.textContent = formatNumber(game.tapPower);
   minersEl.textContent = formatNumber(game.miners);
+  critChanceStatEl.textContent = `${Math.round(game.critChance * 100)}%`;
   tapCostTextEl.textContent = formatNumber(game.tapUpgradeCost);
   minerCostTextEl.textContent = formatNumber(game.minerCost);
 
@@ -85,8 +89,24 @@ function loadGame() {
   }
 }
 
+function showCriticalHit(multiplier, amount) {
+  criticalHitTextEl.textContent = `CRITICAL! ${multiplier}× +${formatNumber(amount)}`;
+  criticalHitTextEl.classList.remove("show");
+  void criticalHitTextEl.offsetWidth;
+  criticalHitTextEl.classList.add("show");
+}
+
 function mineGold() {
-  game.gold += game.tapPower;
+  const isCritical = Math.random() < game.critChance;
+  const multiplier = isCritical && Math.random() < 0.2 ? 10 : isCritical ? 5 : 1;
+  const goldEarned = game.tapPower * multiplier;
+
+  game.gold += goldEarned;
+
+  if (isCritical) {
+    showCriticalHit(multiplier, goldEarned);
+  }
+
   render();
   saveGame();
 }
@@ -129,6 +149,7 @@ function resetGame() {
     miners: 0,
     tapUpgradeCost: 10,
     minerCost: 25,
+    critChance: 0.1,
     lastPlayed: Date.now()
   };
   statusTextEl.textContent = "Save reset. Your progress saves automatically on this device.";
