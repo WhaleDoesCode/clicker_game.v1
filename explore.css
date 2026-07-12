@@ -1,0 +1,136 @@
+.explore-panel header {
+  margin-bottom: 18px;
+}
+
+.explore-inventory {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.explore-inventory article,
+.location-card,
+.explore-log-card,
+.future-location {
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(15, 23, 42, 0.78);
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(14px);
+}
+
+.explore-inventory article {
+  display: grid;
+  grid-template-columns: 66px 1fr;
+  align-items: center;
+  gap: 12px;
+  border-radius: 18px;
+  padding: 12px;
+}
+
+.explore-inventory img {
+  width: 66px;
+  height: 66px;
+  border-radius: 14px;
+  object-fit: contain;
+  background: rgba(2, 6, 23, 0.52);
+}
+
+.explore-inventory div {
+  display: grid;
+  gap: 3px;
+}
+
+.explore-inventory span,
+.location-card p,
+.location-card small,
+.future-location span {
+  color: #94a3b8;
+}
+
+.explore-inventory strong {
+  font-size: 1.75rem;
+}
+
+.location-card,
+.explore-log-card {
+  margin-bottom: 16px;
+  border-radius: 20px;
+  padding: 18px;
+}
+
+.location-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.location-heading h2,
+.location-heading .eyebrow {
+  margin-bottom: 0;
+}
+
+.location-heading > strong {
+  color: #86efac;
+}
+
+.location-card p {
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.explore-button {
+  min-height: 64px;
+  background: linear-gradient(145deg, #15803d, #166534);
+  box-shadow: 0 12px 28px rgba(22, 101, 52, 0.28);
+}
+
+.location-card small {
+  display: block;
+  margin-top: 9px;
+  text-align: center;
+}
+
+.explore-log {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 1.35rem;
+  color: #cbd5e1;
+}
+
+.explore-log li:first-child {
+  color: #f8fafc;
+  font-weight: 750;
+}
+
+.future-locations {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.future-location {
+  display: grid;
+  gap: 4px;
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.future-location.active {
+  border-color: rgba(74, 222, 128, 0.45);
+  background: rgba(20, 83, 45, 0.35);
+}
+
+.future-location.locked {
+  opacity: 0.55;
+}
+
+@media (max-width: 520px) {
+  .explore-inventory,
+  .future-locations {
+    grid-template-columns: 1fr;
+  }
+}
