@@ -1,0 +1,122 @@
+.combat-panel {
+  position: relative;
+  min-height: 360px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 24px;
+  padding: 32px 22px;
+  background: rgba(15, 23, 42, 0.78);
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.28);
+  text-align: center;
+  backdrop-filter: blur(14px);
+}
+
+.combat-panel h1 {
+  margin-bottom: 14px;
+}
+
+.combat-panel > p {
+  max-width: 460px;
+  margin-inline: auto;
+  color: #cbd5e1;
+  line-height: 1.55;
+}
+
+.debug-hotspot {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 72px;
+  height: 72px;
+  padding: 0;
+  border: 0;
+  border-radius: 0 0 24px 0;
+  background: transparent;
+  box-shadow: none;
+  opacity: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.debug-panel {
+  display: grid;
+  gap: 12px;
+  margin-top: 28px;
+  padding: 16px;
+  border: 1px solid rgba(96, 165, 250, 0.35);
+  border-radius: 18px;
+  background: rgba(2, 6, 23, 0.88);
+  text-align: left;
+}
+
+.debug-panel[hidden] {
+  display: none;
+}
+
+.debug-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.debug-panel-header h2,
+.debug-panel-header p {
+  margin: 0;
+}
+
+.debug-panel-header p {
+  color: #94a3b8;
+  font-size: 0.82rem;
+}
+
+.debug-close-button {
+  width: auto;
+  padding: 8px 12px;
+  background: rgba(30, 41, 59, 0.9);
+}
+
+.debug-group {
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.72);
+}
+
+.debug-group summary {
+  padding: 14px;
+  cursor: pointer;
+  font-weight: 800;
+  user-select: none;
+}
+
+.debug-options {
+  display: grid;
+  gap: 10px;
+  padding: 0 14px 14px;
+}
+
+.debug-option {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  color: #cbd5e1;
+}
+
+.debug-option input {
+  width: 18px;
+  height: 18px;
+}
+
+.debug-option small {
+  color: #64748b;
+}
+
+.debug-action {
+  background: rgba(30, 41, 59, 0.9);
+}
+
+.debug-action:disabled,
+.debug-option input:disabled {
+  opacity: 0.55;
+}
