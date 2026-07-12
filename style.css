@@ -108,11 +108,13 @@ h1 {
 }
 
 .mine-button {
+  position: relative;
   display: grid;
   place-items: center;
   gap: 8px;
   min-height: 190px;
   margin-bottom: 18px;
+  overflow: hidden;
   border: 1px solid rgba(250, 204, 21, 0.55);
   border-radius: 26px;
   background:
@@ -130,6 +132,44 @@ h1 {
   object-fit: cover;
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
   pointer-events: none;
+}
+
+.critical-hit-text {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  z-index: 2;
+  transform: translate(-50%, -8px) scale(0.9);
+  opacity: 0;
+  color: #fef08a;
+  font-size: clamp(1.05rem, 6vw, 1.8rem);
+  font-weight: 1000;
+  letter-spacing: 0.08em;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+}
+
+.critical-hit-text.show {
+  animation: critical-pop 700ms ease-out;
+}
+
+@keyframes critical-pop {
+  0% {
+    transform: translate(-50%, 8px) scale(0.75);
+    opacity: 0;
+  }
+  20% {
+    transform: translate(-50%, 0) scale(1.12);
+    opacity: 1;
+  }
+  75% {
+    transform: translate(-50%, -8px) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -20px) scale(0.95);
+    opacity: 0;
+  }
 }
 
 .mine-button small {
@@ -160,7 +200,7 @@ h1 {
 
 .stats-card {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   margin-top: 16px;
   border-radius: 20px;
@@ -199,6 +239,12 @@ footer p {
   background: transparent;
   color: #fca5a5;
   font-weight: 700;
+}
+
+@media (max-width: 430px) {
+  .stats-card {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (min-width: 640px) {
