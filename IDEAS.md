@@ -4,7 +4,7 @@ This file is the working idea board for the project. Keep rough ideas here befor
 
 ## Current game
 
-- Four main tabs: Mining, Farming, Exploring, and Combat.
+- Five main tabs: Mining, Farming, Exploring, Crafting, and Combat.
 - Mining:
   - Tap to earn gold.
   - Buy stronger tap power.
@@ -14,10 +14,35 @@ This file is the working idea board for the project. Keep rough ideas here befor
 - Exploring:
   - Forest is the first available location.
   - The Explore button has a short cooldown.
-  - Exploration can award sticks, stone pebbles, or nothing.
-  - Sticks, stone pebbles, trip count, cooldown state, and the recent-find log save in `localStorage`.
+  - Exploration awards sticks, stone pebbles, hide, or nothing.
+  - Resources, trip count, cooldown state, and the recent-find log save in `localStorage`.
   - Rocky Trail, Old Ruins, and Snowfields are visible as future locked locations.
-- Progress saves in the browser with the existing `clickerGameSaveV1` key.
+- Crafting:
+  - Shared inventory displays sticks, stone pebbles, hide, leather, and leather bindings.
+  - Wooden Pickaxe, Wooden Sword, and Wooden Hoe recipes are implemented.
+  - Crafting consumes the listed materials and grants owned equipment.
+  - Crafted equipment can be equipped.
+  - Equipment ownership and the equipped tool save with the existing game save.
+- Progress saves with the existing `clickerGameSaveV1` key.
+
+## Current Forest result table
+
+| Result | Chance |
+| --- | ---: |
+| Nothing | 30% |
+| 1 stick | 32% |
+| 2 sticks | 12% |
+| 1 stone pebble | 15% |
+| 2 stone pebbles | 7% |
+| 1 hide | 4% |
+
+## Current crafting recipes
+
+| Item | Materials | Purpose |
+| --- | --- | --- |
+| Wooden Pickaxe | 4 sticks, 6 stone pebbles | Starter Mining equipment |
+| Wooden Sword | 5 sticks, 2 stone pebbles | Starter Combat equipment |
+| Wooden Hoe | 4 sticks, 3 stone pebbles, 1 hide | Starter Farming equipment |
 
 ## Current resource and equipment icons
 
@@ -39,108 +64,68 @@ Canonical icon folder: `assets/icons/`
 - `wooden_hoe.png`
 - `wooden_sword.png`
 
-## Exploring plan
+## Implemented feature packages
 
-### Implemented first chunk
+### Mining foundation
 
-- [x] Replace the Exploring placeholder with a working Forest screen.
-- [x] Add an Explore button.
-- [x] Add a short cooldown so Exploring feels different from Mining.
-- [x] Add an inventory display for sticks and stone pebbles.
-- [x] Add a recent-find travel log.
-- [x] Save exploration resources and progress without replacing the old save.
-- [x] Show future locked locations.
+- [x] Gold tapping
+- [x] Tap upgrades
+- [x] Passive miners
+- [x] Offline earnings
+- [x] Critical hits
+- [x] Milestones
+- [x] Permanent rewards
 
-### Current Forest result table
+### Exploring foundation
 
-| Result | Chance |
-| --- | ---: |
-| Nothing | 35% |
-| 1 stick | 35% |
-| 2 sticks | 10% |
-| 1 stone pebble | 15% |
-| 2 stone pebbles | 5% |
+- [x] Forest location
+- [x] Explore button and cooldown
+- [x] Weighted loot table
+- [x] Sticks and stone pebbles
+- [x] Uncommon hide drop
+- [x] Resource inventory
+- [x] Recent-find travel log
+- [x] Save compatibility
+- [x] Future locked locations
 
-### Next Exploring additions
+### Crafting foundation
 
-- [ ] Add hide as an uncommon Forest find.
+- [x] Crafting main tab
+- [x] Shared material inventory
+- [x] Wooden Pickaxe recipe
+- [x] Wooden Sword recipe
+- [x] Wooden Hoe recipe
+- [x] Clear requirements and disabled states
+- [x] Material consumption
+- [x] Equipment ownership
+- [x] Equip controls
+- [x] Saved equipment state
+- [x] Reset compatibility
+
+## Next Crafting additions
+
+- [ ] Add a proper `wooden_pickaxe.png` icon.
+- [ ] Add recipes that process hide into leather.
+- [ ] Add recipes that process leather into leather bindings.
+- [ ] Add Iron Pickaxe, Iron Sword, and Iron Hoe recipes.
+- [ ] Add Gold Pickaxe when a matching icon exists.
+- [ ] Give equipped tools real gameplay bonuses in their matching tabs.
+- [ ] Add recipe unlock requirements.
+- [ ] Add crafting milestones and permanent rewards.
+- [ ] Add recipe categories for Tools, Weapons, Armor, and Materials.
+
+## Next Exploring additions
+
 - [ ] Add herbs and berries as Farming ingredients.
 - [ ] Add a small chance to discover location clues.
 - [ ] Unlock Rocky Trail after a trip or resource milestone.
 - [ ] Give Rocky Trail better stone drops and a coal chance.
-- [ ] Add Old Ruins with treasure, leather binding, and combat encounters.
+- [ ] Add Old Ruins with treasure, leather bindings, and combat encounters.
 - [ ] Add Snowfields with cold-weather resources and equipment requirements.
 - [ ] Add exploration upgrades for luck, cooldown, and carry capacity.
 - [ ] Add exploration milestones and permanent rewards.
-- [ ] Add rare events such as abandoned camps, wounded travelers, and treasure maps.
 
-## Icon checklist for future work
-
-### Already available
-
-- Sticks
-- Stone pebbles
-- Hide
-- Leather
-- Leather binding
-- Wooden sword
-- Iron sword
-- Gold sword
-- Wooden hoe
-- Iron hoe
-- Gold hoe
-- Iron ore
-- Iron ingot
-- Gold ore
-- Gold ingot
-
-### Exploring icons still needed
-
-- Forest location icon
-- Rocky Trail location icon
-- Old Ruins location icon
-- Snowfields location icon
-- Herb bundle
-- Berries
-- Coal
-- Treasure map
-- Location clue or map fragment
-- Small treasure chest
-- Abandoned camp
-- Backpack or carry-capacity icon
-- Exploration boots
-- Compass
-- Lantern or torch
-
-### Farming icons likely needed
-
-- Seeds
-- Wheat
-- Carrot
-- Potato
-- Corn
-- Watering can
-- Soil plot
-- Fertilizer
-- Wooden scythe or sickle
-- Iron scythe or sickle
-- Gold scythe or sickle
-
-### Combat icons likely needed
-
-- Basic enemy or slime
-- Forest wolf
-- Bandit
-- Health potion
-- Shield
-- Helmet
-- Chest armor
-- Boots
-- Ring
-- Damage icon
-- Defense icon
-
-## Next Mining ideas
+## Next Mining additions
 
 - [ ] Use `gold_ore.png` for the main mining button.
 - [ ] Add iron as the first mineable resource.
@@ -150,40 +135,58 @@ Canonical icon folder: `assets/icons/`
 - [ ] Add separate inventory counts for ore and ingots.
 - [ ] Add a furnace upgrade.
 - [ ] Add miners assigned to iron or gold.
-- [ ] Add offline production limits and a clearer welcome-back summary.
-- [ ] Add small tap animations and floating reward numbers.
 
-## Ten gameplay ideas
+## Icons still needed
 
-1. **Two-resource loop**  
-   Mine iron first, smelt it into ingots, then use iron upgrades to unlock gold mining.
+### Crafting and equipment
 
-2. **Smelter system**  
-   Ore is not instantly valuable. Players feed ore into a smelter that converts it into ingots over time.
+- Wooden pickaxe
+- Stone pickaxe
+- Iron pickaxe
+- Gold pickaxe
+- Crafting hammer
+- Furnace
+- Backpack
+- Shield
+- Helmet
+- Chest armor
+- Boots
+- Ring
 
-3. **Tool tiers**  
-   Wooden → stone → iron → gold → fantasy late-game tier, with stronger gathering and critical-hit bonuses.
+### Exploring
 
-4. **Critical hits — IMPLEMENTED**  
-   Every mining tap has a chance to strike a rich vein and award 5× or 10× resources.
+- Forest location
+- Rocky Trail location
+- Old Ruins location
+- Snowfields location
+- Herb bundle
+- Berries
+- Coal
+- Treasure map
+- Location clue or map fragment
+- Small treasure chest
+- Compass
+- Lantern or torch
 
-5. **Resource-specific workers**  
-   Iron miners gather iron ore, gold miners gather gold ore, and smelters automatically refine both.
+### Farming
 
-6. **Mine depth progression**  
-   Start at the surface, then unlock deeper layers with better rewards, higher costs, and new materials.
+- Seeds
+- Wheat
+- Carrot
+- Potato
+- Corn
+- Watering can
+- Soil plot
+- Fertilizer
 
-7. **Random ore veins**  
-   Temporary rich veins appear for a limited time and provide bonus income.
+### Combat
 
-8. **Upgrade paths with choices**  
-   Let players specialize in tapping, passive income, smelting, farming, exploration, or combat.
-
-9. **Prestige system**  
-   Reset progression for permanent reputation or profession points.
-
-10. **Collection and milestones — IMPLEMENTED FOR MINING**  
-    Track progress in visible milestone collections with one-time and permanent rewards.
+- Basic enemy or slime
+- Forest wolf
+- Bandit
+- Health potion
+- Damage icon
+- Defense icon
 
 ## Save and safety rules
 
@@ -195,10 +198,9 @@ Canonical icon folder: `assets/icons/`
 - Keep the game deployable through GitHub Pages.
 - Canonical icon names use lowercase snake_case.
 
-## Change log for this file
+## Change log
 
 - 2026-07-12: Created the initial project idea board.
-- 2026-07-12: Added ten gameplay ideas for progression, automation, events, upgrades, prestige, and milestones.
-- 2026-07-12: Implemented critical hits with 5×/10× rewards, visible feedback, and save-compatible `critChance` data.
-- 2026-07-12: Implemented three visible Mining milestones with saved progress and one-time rewards.
-- 2026-07-12: Added the Exploring roadmap, icon checklist, Forest result table, and first playable Exploring loop.
+- 2026-07-12: Added Mining critical hits and milestones.
+- 2026-07-12: Added the first playable Exploring loop.
+- 2026-07-12: Added hide drops and the first playable Crafting loop with three recipes and saved equipment.
