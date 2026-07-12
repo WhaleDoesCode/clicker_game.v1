@@ -13,6 +13,11 @@ This file is the working idea board for the project. Keep rough ideas here befor
   - Critical taps award either 5× or 10× tap rewards.
   - A quick `CRITICAL!` message appears on the mine button.
   - `critChance` is stored in the existing save data.
+- Milestones are implemented:
+  - Tap Apprentice: 25 taps rewards permanent +1 tap power.
+  - Gold Collector: 250 lifetime gold rewards +50 gold.
+  - Crew Boss: 5 miners rewards permanent +2 tap power.
+  - Progress, claimed rewards, lifetime gold, and total taps are stored in the existing save data.
 - Current resource icons live in `assets/icons/`:
   - `iron_ore.png`
   - `iron_ingot.png`
@@ -61,8 +66,8 @@ This file is the working idea board for the project. Keep rough ideas here befor
 9. **Prestige system**  
    Reset the mine for permanent Mine Reputation or Prospector Points that improve future runs.
 
-10. **Collection and milestones**  
-    Add achievements such as mining 1,000 iron ore, owning 25 miners, or smelting the first gold ingot, each with a permanent reward.
+10. **Collection and milestones — IMPLEMENTED**  
+    Track taps, lifetime gold, and miners in a visible milestone collection with one-time permanent rewards.
 
 ## Possible game loop
 
@@ -145,3 +150,4 @@ Put random ideas here without worrying about order or feasibility.
 - 2026-07-12: Created the initial project idea board.
 - 2026-07-12: Added ten gameplay ideas for progression, automation, events, upgrades, prestige, and milestones.
 - 2026-07-12: Implemented critical hits with 5×/10× rewards, visible feedback, and save-compatible `critChance` data.
+- 2026-07-12: Implemented three visible milestones with saved progress and one-time rewards.
