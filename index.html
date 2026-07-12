@@ -22,6 +22,7 @@
     </section>
 
     <button id="mineButton" class="mine-button" type="button" aria-label="Mine gold">
+      <span id="criticalHitText" class="critical-hit-text" aria-live="polite"></span>
       <img class="gold-ore-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Gold_%28Dixie_Mine%2C_Idaho_Springs%2C_Colorado%2C_USA%29_1_%2816868343368%29.jpg/330px-Gold_%28Dixie_Mine%2C_Idaho_Springs%2C_Colorado%2C_USA%29_1_%2816868343368%29.jpg" alt="Gold ore specimen">
       <span>Mine Gold</span>
       <small>+<span id="tapPower">1</span> per tap</small>
@@ -59,6 +60,10 @@
       <div>
         <span>Miners</span>
         <strong id="miners">0</strong>
+      </div>
+      <div>
+        <span>Critical chance</span>
+        <strong id="critChanceStat">10%</strong>
       </div>
     </section>
 
