@@ -110,6 +110,7 @@ h1 {
 .mine-button {
   display: grid;
   place-items: center;
+  gap: 8px;
   min-height: 190px;
   margin-bottom: 18px;
   border: 1px solid rgba(250, 204, 21, 0.55);
@@ -121,8 +122,14 @@ h1 {
   font-size: 1.35rem;
 }
 
-.mine-button .coin {
-  font-size: 4.2rem;
+.gold-ore-icon {
+  width: 96px;
+  height: 96px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-radius: 22px;
+  object-fit: cover;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
 }
 
 .mine-button small {
@@ -181,6 +188,11 @@ footer p {
   margin-bottom: 0;
   color: #94a3b8;
   font-size: 0.9rem;
+}
+
+.image-credit {
+  font-size: 0.72rem;
+  opacity: 0.72;
 }
 
 .reset-button {
