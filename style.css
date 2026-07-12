@@ -79,7 +79,8 @@ h1 {
 
 .score-card,
 .stats-card,
-.upgrade-card {
+.upgrade-card,
+.milestones-card {
   border: 1px solid rgba(148, 163, 184, 0.2);
   background: rgba(15, 23, 42, 0.78);
   box-shadow: 0 22px 50px rgba(0, 0, 0, 0.28);
@@ -215,6 +216,81 @@ h1 {
 
 .stats-card strong {
   font-size: 1.5rem;
+}
+
+.milestones-card {
+  margin-top: 16px;
+  border-radius: 20px;
+  padding: 18px;
+}
+
+.milestones-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.milestones-heading h2,
+.milestones-heading .eyebrow {
+  margin-bottom: 0;
+}
+
+.milestones-heading > strong {
+  color: #fde68a;
+  font-size: 1.15rem;
+}
+
+.milestone-list {
+  display: grid;
+  gap: 12px;
+}
+
+.milestone-item {
+  display: grid;
+  gap: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 16px;
+  padding: 14px;
+  background: rgba(30, 41, 59, 0.62);
+}
+
+.milestone-item.claimed {
+  border-color: rgba(250, 204, 21, 0.55);
+  background: rgba(113, 63, 18, 0.28);
+}
+
+.milestone-copy {
+  display: grid;
+  gap: 3px;
+}
+
+.milestone-copy span,
+.milestone-item small {
+  color: #94a3b8;
+  font-size: 0.82rem;
+}
+
+.milestone-item.claimed small {
+  color: #fde68a;
+  font-weight: 800;
+}
+
+.milestone-progress {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(2, 6, 23, 0.75);
+}
+
+.milestone-progress span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #d97706, #facc15);
+  transition: width 180ms ease-out;
 }
 
 footer {
