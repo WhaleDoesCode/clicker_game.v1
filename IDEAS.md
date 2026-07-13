@@ -6,81 +6,81 @@ This file is the working idea board for the project. Keep rough ideas here befor
 
 - Five main tabs: Mining, Farming, Exploring, Crafting, and Combat.
 - Mining:
-  - Tap to earn gold.
-  - Buy stronger tap power.
-  - Hire miners for passive income.
+  - Tap to earn gold, buy stronger tap power, hire passive miners, and earn offline gold with the same capped safety philosophy as before.
   - Critical hits have a 10% chance and award 5× or 10× tap rewards.
-  - Milestones and permanent rewards are visible and saved.
+  - Miner assignment keeps `game.miners` as total hired miners. Gold miners earn 1 gold/second; Iron miners earn 1 Iron Ore every 5 seconds, or every 4 seconds while an Iron Pickaxe is equipped.
 - Exploring:
-  - Forest is the first available location.
-  - The Explore button has a short cooldown.
-  - Exploration awards sticks, stone pebbles, hide, or nothing.
-  - Resources, trip count, cooldown state, and the recent-find log save in `localStorage`.
-  - Rocky Trail, Old Ruins, and Snowfields are visible as future locked locations.
+  - Forest is available immediately and can reveal Location Clues.
+  - Rocky Trail unlocks permanently after 3 Location Clues and 12 Forest trips.
+  - Forest and Rocky Trail are selectable; Old Ruins and Snowfields remain future locked locations unless Debug unlocks them visually.
+  - Exploration resources, separate trip counts, selected location, cooldown, upgrades, unlocks, and recent-find log save in `localStorage`.
+  - Compass shifts chance away from Nothing, Trail Boots reduce cooldown from the base duration, and Backpack can double material hauls. Location clues are never doubled.
+- Crafting and Furnace:
+  - Shared inventory displays sticks, stone pebbles, hide, leather, leather bindings, iron ore, iron ingots, coal, and clues where appropriate.
+  - Hide -> Leather and Leather -> Binding processing remain instant recipes.
+  - Iron Ingots now normally come from a timestamp-driven Furnace queue: 3 Iron Ore + 1 Coal -> 1 Iron Ingot.
+  - Furnace has 3 levels, survives refresh/offline elapsed time, and saves queue state and lifetime batches.
+  - Wooden and Iron tools remain craftable and equippable.
 - Farming:
   - Wooden Hoe ownership is required before planting.
   - Wheat planting uses a 15-second timestamp-based growth timer.
   - Harvesting awards 3–6 Wheat, or 5–9 Wheat with an equipped Iron Hoe.
-  - Wheat inventory, harvest count, and the Farming log save with existing saves.
   - Debug No Cooldowns makes planted crops immediately harvestable.
-- Crafting:
-  - Shared inventory displays sticks, stone pebbles, hide, leather, leather bindings, iron ore, and iron ingots.
-  - Wooden Pickaxe, Wooden Sword, Wooden Hoe, Iron Pickaxe, Iron Sword, and Iron Hoe recipes are implemented.
-  - Crafting consumes the listed materials and grants owned equipment.
-  - Crafted equipment can be equipped.
-  - Hide can be processed into Leather, Leather can be processed into Leather Binding, and Iron Ore can be smelted into Iron Ingot.
-  - Equipment ownership and the equipped tool save with the existing game save.
-- Iron Mining:
-  - The Gold Clicker loop remains unchanged.
-  - A separate Iron Mine awards iron ore after the player owns a Wooden Pickaxe or better.
-  - Iron ore and iron ingot inventory save with the existing save key.
-  - Equipping an Iron Pickaxe increases iron ore per tap from 1 to 2.
+- Progress:
+  - Original Mining milestones remain.
+  - Trail Finder, Trail Veteran, and Ironworker are saved permanent progression rewards.
 - Progress saves with the existing `clickerGameSaveV1` key.
 
 ## Current Forest result table
 
 | Result | Chance |
 | --- | ---: |
-| Nothing | 30% |
-| 1 stick | 32% |
-| 2 sticks | 12% |
+| Nothing | 28% |
+| 1 stick | 31% |
+| 2 sticks | 11% |
 | 1 stone pebble | 15% |
 | 2 stone pebbles | 7% |
 | 1 hide | 4% |
+| 1 location clue | 4% |
 
-## Current crafting recipes
+## Current Rocky Trail result table
 
-| Item | Materials | Purpose |
+| Result | Chance |
+| --- | ---: |
+| Nothing | 20% |
+| 1 stone pebble | 25% |
+| 2 stone pebbles | 18% |
+| 3 stone pebbles | 7% |
+| 1 iron ore | 15% |
+| 2 iron ore | 5% |
+| 1 coal | 8% |
+| 1 location clue | 2% |
+
+## Current costs and progression
+
+### Expedition Upgrades
+
+| Upgrade | Level 1 | Level 2 | Level 3 | Effect |
+| --- | --- | --- | --- | --- |
+| Compass | 5 sticks, 5 stone pebbles | 10 sticks, 10 stone pebbles, 1 leather binding | 15 sticks, 15 stone pebbles, 2 leather bindings, 2 iron ingots | Each level shifts 2 percentage points from Nothing to useful loot proportionally. Trail Finder adds +5 more points. |
+| Trail Boots | 2 leather, 1 leather binding | 4 leather, 2 leather bindings, 1 iron ingot | 6 leather, 3 leather bindings, 3 iron ingots | Cooldown is reduced from base by 10% per level. Trail Veteran multiplies the result by another 0.9. |
+| Backpack | 8 sticks, 2 leather | 12 sticks, 3 leather, 2 leather bindings | 20 sticks, 5 leather, 3 leather bindings, 2 iron ingots | 15% / 25% / 35% chance to double material loot only. |
+
+### Furnace
+
+| Level | Cost | Queue | Time | Recipe |
+| --- | --- | ---: | ---: | --- |
+| 1 | 12 stone pebbles, 6 sticks, 1 leather binding | 1 batch | 12 seconds | 3 iron ore + 1 coal -> 1 iron ingot |
+| 2 | 8 iron ingots, 15 stone pebbles, 4 leather bindings | 2 batches | 9 seconds | same |
+| 3 | 16 iron ingots, 30 stone pebbles, 8 leather bindings | 5 batches | 6 seconds | same |
+
+### Milestones
+
+| Milestone | Requirement | Reward |
 | --- | --- | --- |
-| Wooden Pickaxe | 4 sticks, 6 stone pebbles | Starter Mining equipment |
-| Wooden Sword | 5 sticks, 2 stone pebbles | Starter Combat equipment |
-| Wooden Hoe | 4 sticks, 3 stone pebbles, 1 hide | Starter Farming equipment |
-| 2 Hide -> Leather | 2 hide | Material processing |
-| 2 Leather -> Binding | 2 leather | Material processing |
-| Iron Ingot | 3 iron ore | Smelting |
-| Iron Pickaxe | 4 iron ingots, 2 sticks, 1 leather binding | Iron Mining bonus while equipped |
-| Iron Sword | 3 iron ingots, 2 sticks, 1 leather binding | Future Combat equipment |
-| Iron Hoe | 2 iron ingots, 3 sticks, 1 leather binding | Wheat harvest bonus while equipped |
-
-## Current resource and equipment icons
-
-Canonical icon folder: `assets/icons/`
-
-- `gold_ingot.png`
-- `gold_ore.png`
-- `gold_hoe.png`
-- `gold_sword.png`
-- `hide.png`
-- `iron_ingot.png`
-- `iron_ore.png`
-- `iron_hoe.png`
-- `iron_sword.png`
-- `leather.png`
-- `leather_binding.png`
-- `sticks.png`
-- `stone_pebbles.png`
-- `wooden_hoe.png`
-- `wooden_sword.png`
+| Trail Finder | Unlock Rocky Trail | +5% exploration luck |
+| Trail Veteran | 50 total exploration trips | Another 10% exploration cooldown reduction |
+| Ironworker | 25 lifetime furnace batches | Each furnace batch has a 10% chance for +1 bonus Iron Ingot |
 
 ## Implemented feature packages
 
@@ -93,18 +93,21 @@ Canonical icon folder: `assets/icons/`
 - [x] Critical hits
 - [x] Milestones
 - [x] Permanent rewards
+- [x] Worker assignment between Gold and Iron
 
-### Exploring foundation
+### Exploring foundation and Rocky Trail expansion
 
 - [x] Forest location
-- [x] Explore button and cooldown
-- [x] Weighted loot table
-- [x] Sticks and stone pebbles
-- [x] Uncommon hide drop
-- [x] Resource inventory
-- [x] Recent-find travel log
+- [x] Explore button and timestamp cooldown
+- [x] Weighted Forest loot table with Location Clues
+- [x] Rocky Trail unlock from clues and Forest trips
+- [x] Rocky Trail loot table with better stone, Iron Ore, Coal, and clues
+- [x] Selectable location cards
+- [x] Resource inventory and recent-find travel log
+- [x] Compass, Trail Boots, and Backpack upgrades
+- [x] Trail milestone rewards
 - [x] Save compatibility
-- [x] Future locked locations
+- [x] Future locked Old Ruins and Snowfields
 
 ### Farming foundation
 
@@ -118,106 +121,46 @@ Canonical icon folder: `assets/icons/`
 - [x] Save compatibility
 - [x] Debug No Cooldowns compatibility
 
-### Crafting foundation
+### Crafting and Furnace foundation
 
 - [x] Crafting main tab
 - [x] Shared material inventory
-- [x] Wooden Pickaxe recipe
-- [x] Wooden Sword recipe
-- [x] Wooden Hoe recipe
-- [x] Clear requirements and disabled states
-- [x] Material consumption
-- [x] Equipment ownership
-- [x] Equip controls
-- [x] Saved equipment state
+- [x] Wooden Pickaxe, Wooden Sword, Wooden Hoe recipes
+- [x] Hide -> Leather and Leather -> Binding processing
+- [x] Iron Pickaxe, Iron Sword, and Iron Hoe recipes
+- [x] Furnace unlock, construction, queueing, and upgrades
+- [x] Coal resource
+- [x] Iron Ore + Coal smelting into Iron Ingots
+- [x] Refresh/offline Furnace completion
+- [x] Equipment ownership and equip controls
 - [x] Reset compatibility
 
-## Next Crafting additions
-
-- [ ] Add a proper `wooden_pickaxe.png` icon.
-- [x] Add recipes that process hide into leather.
-- [x] Add recipes that process leather into leather bindings.
-- [x] Add Iron Pickaxe, Iron Sword, and Iron Hoe recipes.
-- [ ] Add Gold Pickaxe when a matching icon exists.
-- [x] Give equipped tools real gameplay bonuses in their matching tabs for Iron Pickaxe and Iron Hoe.
-- [ ] Activate Sword bonuses when Combat exists.
-- [ ] Add recipe unlock requirements.
-- [ ] Add crafting milestones and permanent rewards.
-- [ ] Add recipe categories for Tools, Weapons, Armor, and Materials.
-
-## Next Exploring additions
-
-- [ ] Add herbs and berries as Farming ingredients.
-- [ ] Add a small chance to discover location clues.
-- [ ] Unlock Rocky Trail after a trip or resource milestone.
-- [ ] Give Rocky Trail better stone drops and a coal chance.
-- [ ] Add Old Ruins with treasure, leather bindings, and combat encounters.
-- [ ] Add Snowfields with cold-weather resources and equipment requirements.
-- [ ] Add exploration upgrades for luck, cooldown, and carry capacity.
-- [ ] Add exploration milestones and permanent rewards.
-
-## Next Mining additions
-
-- [ ] Use `gold_ore.png` for the main mining button.
-- [x] Add iron as the first mineable resource.
-- [ ] Unlock gold after reaching an iron milestone.
-- [x] Add smelting: ore becomes ingots.
-- [x] Use ingots for iron tools instead of raw ore.
-- [x] Add separate inventory counts for ore and ingots.
-- [ ] Add a furnace upgrade.
-- [ ] Add miners assigned to iron or gold.
-
-## Icons still needed
+## Future additions
 
 ### Crafting and equipment
 
-- Wooden pickaxe
-- Stone pickaxe
-- Iron pickaxe
-- Gold pickaxe
-- Crafting hammer
-- Furnace
-- Backpack
-- Shield
-- Helmet
-- Chest armor
-- Boots
-- Ring
+- [ ] Add a proper `wooden_pickaxe.png` icon.
+- [ ] Add Gold Pickaxe when a matching icon exists.
+- [ ] Activate Sword bonuses when Combat exists.
+- [ ] Add recipe unlock requirements and categories for Tools, Weapons, Armor, and Materials.
+- [ ] Add crafting milestones and permanent rewards beyond Ironworker.
 
 ### Exploring
 
-- Forest location
-- Rocky Trail location
-- Old Ruins location
-- Snowfields location
-- Herb bundle
-- Berries
-- Coal
-- Treasure map
-- Location clue or map fragment
-- Small treasure chest
-- Compass
-- Lantern or torch
+- [ ] Add herbs and berries as Farming ingredients.
+- [ ] Add Old Ruins with treasure, leather bindings, and combat encounters.
+- [ ] Add Snowfields with cold-weather resources and equipment requirements.
+- [ ] Add lantern/torch or weather equipment gates.
 
-### Farming
+### Mining
 
-- Seeds
-- Wheat
-- Carrot
-- Potato
-- Corn
-- Watering can
-- Soil plot
-- Fertilizer
+- [ ] Use `gold_ore.png` for the main mining button.
+- [ ] Unlock deeper Gold/rare ore veins after iron milestones.
+- [ ] Add higher worker specializations.
 
-### Combat
+## Current resource and equipment icons
 
-- Basic enemy or slime
-- Forest wolf
-- Bandit
-- Health potion
-- Damage icon
-- Defense icon
+Canonical icon folder: `assets/icons/`. Coal, clue, Compass, Backpack, and Furnace currently use styled text/emoji fallbacks rather than nonexistent asset paths.
 
 ## Save and safety rules
 
@@ -235,5 +178,5 @@ Canonical icon folder: `assets/icons/`
 - 2026-07-12: Added Mining critical hits and milestones.
 - 2026-07-12: Added the first playable Exploring loop.
 - 2026-07-12: Added hide drops and the first playable Crafting loop with three recipes and saved equipment.
-
 - 2026-07-13: Added material processing, smelting, iron mining, iron inventory, iron equipment recipes, Iron Pickaxe mining yield, Iron Hoe wheat harvest bonuses, and debug support for iron progression.
+- 2026-07-13: Added Rocky Trail discovery, Location Clues, Coal, Expedition Upgrades, the timed Furnace, miner worker assignment, Trail milestones, centralized state normalization, Debug integration, and static tests for the connected progression package.

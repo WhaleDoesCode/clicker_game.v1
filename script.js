@@ -1,5 +1,47 @@
 const SAVE_KEY = "clickerGameSaveV1";
 
+const BASE_GAME_DEFAULTS = {
+  gold: 0, tapPower: 1, miners: 0, tapUpgradeCost: 10, minerCost: 25, critChance: 0.1, lifetimeGold: 0, totalTaps: 0,
+  milestones: { tapApprentice: false, goldCollector: false, crewBoss: false, trailFinder: false, trailVeteran: false, ironworker: false },
+  resources: { sticks: 0, stonePebbles: 0, hide: 0, leather: 0, leatherBinding: 0, ironOre: 0, ironIngot: 0, coal: 0, locationClues: 0 },
+  equipment: { woodenPickaxe: 0, woodenSword: 0, woodenHoe: 0, ironPickaxe: 0, ironSword: 0, ironHoe: 0, equippedTool: null },
+  exploration: { totalTrips: 0, forestTrips: 0, rockyTrailTrips: 0, currentLocation: "forest", cooldownUntil: 0, log: [], unlockedLocations: { forest: true, rockyTrail: false, oldRuins: false, snowfields: false }, upgrades: { compass: 0, trailBoots: 0, backpack: 0 } },
+  furnace: { unlocked: false, level: 0, queuedBatches: 0, queueStartedAt: 0, lifetimeBatches: 0 },
+  workers: { goldMiners: 0, ironMiners: 0, lastIronAt: Date.now() },
+  lastPlayed: Date.now()
+};
+
+function deepMergeDefaults(defaults, saved) {
+  const result = Array.isArray(defaults) ? [] : { ...defaults };
+  Object.entries(saved || {}).forEach(([key, value]) => {
+    if (value && typeof value === "object" && !Array.isArray(value) && defaults[key] && typeof defaults[key] === "object" && !Array.isArray(defaults[key])) {
+      result[key] = deepMergeDefaults(defaults[key], value);
+    } else {
+      result[key] = value;
+    }
+  });
+  return result;
+}
+
+function normalizeGameState(target = game) {
+  const legacyIron = target?.resources && Number.isFinite(target.resources.iron) ? target.resources.iron : null;
+  const normalized = deepMergeDefaults(BASE_GAME_DEFAULTS, target || {});
+  if (legacyIron !== null && (!Number.isFinite(target.resources.ironOre) || target.resources.ironOre <= 0)) normalized.resources.ironOre = legacyIron;
+  delete normalized.resources.iron;
+  normalized.exploration.log = Array.isArray(normalized.exploration.log) ? normalized.exploration.log.slice(0, 5) : [];
+  if (!normalized.exploration.unlockedLocations.forest) normalized.exploration.unlockedLocations.forest = true;
+  if (!normalized.exploration.unlockedLocations[normalized.exploration.currentLocation]) normalized.exploration.currentLocation = "forest";
+  normalized.miners = Math.max(0, Math.floor(normalized.miners || 0));
+  normalized.workers.goldMiners = Math.max(0, Math.floor(normalized.workers.goldMiners || 0));
+  normalized.workers.ironMiners = Math.max(0, Math.floor(normalized.workers.ironMiners || 0));
+  if (normalized.workers.goldMiners + normalized.workers.ironMiners > normalized.miners) normalized.workers.ironMiners = Math.max(0, normalized.miners - normalized.workers.goldMiners);
+  normalized.workers.goldMiners = normalized.miners - normalized.workers.ironMiners;
+  return normalized;
+}
+
+window.normalizeGameState = normalizeGameState;
+
+
 let game = {
   gold: 0,
   tapPower: 1,
@@ -39,6 +81,16 @@ const ironOreCountEl = document.getElementById("ironOreCount");
 const ironIngotCountEl = document.getElementById("ironIngotCount");
 const ironPerTapEl = document.getElementById("ironPerTap");
 const ironMineStatusEl = document.getElementById("ironMineStatus");
+const workerUnlockStatusEl = document.getElementById("workerUnlockStatus");
+const workerTotalEl = document.getElementById("workerTotal");
+const goldMinersCountEl = document.getElementById("goldMinersCount");
+const ironMinersCountEl = document.getElementById("ironMinersCount");
+const workerGoldRateEl = document.getElementById("workerGoldRate");
+const workerIronRateEl = document.getElementById("workerIronRate");
+const ironMinerMinusButton = document.getElementById("ironMinerMinus");
+const ironMinerPlusButton = document.getElementById("ironMinerPlus");
+const ironMinerMaxButton = document.getElementById("ironMinerMax");
+const allGoldMinersButton = document.getElementById("allGoldMiners");
 const milestonesTab = document.getElementById("milestonesTab");
 const rewardsTab = document.getElementById("rewardsTab");
 const milestonesPanel = document.getElementById("milestonesPanel");
@@ -104,6 +156,7 @@ function setActiveProgressTab(tabName) {
   renderMilestones();
   renderPermanentRewards();
   renderIronMining();
+  renderWorkers();
 }
 
 function setMilestoneProgress(key, current, target, unit) {
@@ -147,22 +200,7 @@ function renderPermanentRewards() {
 }
 
 function ensureIronState() {
-  game.resources = {
-    ironOre: 0,
-    ironIngot: 0,
-    ...(game.resources || {})
-  };
-
-  if (Number.isFinite(game.resources.iron) && !Number.isFinite(game.resources.ironOre)) {
-    game.resources.ironOre = game.resources.iron;
-  }
-
-  game.equipment = {
-    woodenPickaxe: 0,
-    ironPickaxe: 0,
-    equippedTool: null,
-    ...(game.equipment || {})
-  };
+  game = normalizeGameState(game);
 }
 
 function ownsIronMiningPickaxe() {
@@ -190,9 +228,60 @@ function renderIronMining() {
     : "Own a Wooden Pickaxe to unlock iron mining.";
 }
 
+function ironWorkerUnlocked() {
+  ensureIronState();
+  return Boolean(game.exploration?.unlockedLocations?.rockyTrail) && ownsIronMiningPickaxe();
+}
+
+function normalizeWorkers() {
+  game = normalizeGameState(game);
+  if (!ironWorkerUnlocked()) game.workers.ironMiners = 0;
+  game.workers.goldMiners = game.miners - game.workers.ironMiners;
+}
+
+function getIronWorkerSecondsPerOre() {
+  return game.equipment?.equippedTool === "ironPickaxe" && (game.equipment.ironPickaxe || 0) > 0 ? 4 : 5;
+}
+
+function processIronWorkers() {
+  normalizeWorkers();
+  const now = Date.now();
+  const elapsed = Math.min(now - (game.workers.lastIronAt || now), 60 * 60 * 8 * 1000);
+  const secondsPerOre = getIronWorkerSecondsPerOre();
+  const ore = Math.floor((elapsed / 1000) * game.workers.ironMiners / secondsPerOre);
+  if (ore > 0) {
+    game.resources.ironOre += ore;
+    game.workers.lastIronAt = now;
+  }
+}
+
+function renderWorkers() {
+  normalizeWorkers();
+  const unlocked = ironWorkerUnlocked();
+  workerUnlockStatusEl.textContent = unlocked ? "Iron unlocked" : "Gold only";
+  workerTotalEl.textContent = formatNumber(game.miners);
+  goldMinersCountEl.textContent = formatNumber(game.workers.goldMiners);
+  ironMinersCountEl.textContent = formatNumber(game.workers.ironMiners);
+  workerGoldRateEl.textContent = formatNumber(game.workers.goldMiners);
+  workerIronRateEl.textContent = unlocked ? `${game.workers.ironMiners} ore / ${getIronWorkerSecondsPerOre()}s each` : "Locked";
+  ironMinerMinusButton.disabled = !unlocked || game.workers.ironMiners <= 0;
+  ironMinerPlusButton.disabled = !unlocked || game.workers.ironMiners >= game.miners;
+  ironMinerMaxButton.disabled = !unlocked || game.workers.ironMiners >= game.miners;
+  allGoldMinersButton.disabled = game.workers.ironMiners <= 0;
+}
+
+function assignIronMiners(count) {
+  normalizeWorkers();
+  if (!ironWorkerUnlocked()) return renderWorkers();
+  game.workers.ironMiners = Math.max(0, Math.min(game.miners, count));
+  game.workers.goldMiners = game.miners - game.workers.ironMiners;
+  render();
+  saveGame();
+}
+
 function render() {
   goldEl.textContent = formatNumber(game.gold);
-  goldPerSecondEl.textContent = formatNumber(game.miners);
+  goldPerSecondEl.textContent = formatNumber(game.workers?.goldMiners ?? game.miners);
   tapPowerEl.textContent = formatNumber(game.tapPower);
   tapPowerStatEl.textContent = formatNumber(game.tapPower);
   minersEl.textContent = formatNumber(game.miners);
@@ -205,6 +294,7 @@ function render() {
   renderMilestones();
   renderPermanentRewards();
   renderIronMining();
+  renderWorkers();
 }
 
 function saveGame() {
@@ -232,18 +322,24 @@ function loadGame() {
       }
     };
 
+    game = normalizeGameState(game);
+
     if (!Number.isFinite(savedGame.lifetimeGold)) {
       game.lifetimeGold = game.gold;
     }
 
     const now = Date.now();
     const secondsAway = Math.max(0, Math.floor((now - game.lastPlayed) / 1000));
-    const offlineGold = Math.min(secondsAway, 60 * 60 * 8) * game.miners;
+    const cappedSeconds = Math.min(secondsAway, 60 * 60 * 8);
+    const offlineGold = cappedSeconds * (game.workers?.goldMiners ?? game.miners);
+    const ironSeconds = game.equipment?.equippedTool === "ironPickaxe" ? 4 : 5;
+    const offlineIron = Math.floor((cappedSeconds * (game.workers?.ironMiners || 0)) / ironSeconds);
 
-    if (offlineGold > 0) {
+    if (offlineGold > 0 || offlineIron > 0) {
       game.gold += offlineGold;
       game.lifetimeGold += offlineGold;
-      statusTextEl.textContent = `Welcome back. Your miners earned ${formatNumber(offlineGold)} gold while you were away.`;
+      game.resources.ironOre += offlineIron;
+      statusTextEl.textContent = `Welcome back. Your workers earned ${formatNumber(offlineGold)} gold${offlineIron ? ` and ${formatNumber(offlineIron)} iron ore` : ""} while you were away.`;
     }
   } catch (error) {
     console.warn("The saved game could not be loaded.", error);
@@ -370,6 +466,7 @@ function buyMiner() {
 
   game.gold -= game.minerCost;
   game.miners += 1;
+  game.workers.goldMiners += 1;
   game.minerCost = Math.ceil(game.minerCost * 1.72);
   checkMilestones();
   render();
@@ -384,25 +481,12 @@ function resetGame() {
   }
 
   localStorage.removeItem(SAVE_KEY);
-  game = {
-    gold: 0,
-    tapPower: 1,
-    miners: 0,
-    tapUpgradeCost: 10,
-    minerCost: 25,
-    critChance: 0.1,
-    lifetimeGold: 0,
-    totalTaps: 0,
-    milestones: {
-      tapApprentice: false,
-      goldCollector: false,
-      crewBoss: false
-    },
-    lastPlayed: Date.now()
-  };
+  game = normalizeGameState({ lastPlayed: Date.now(), workers: { goldMiners: 0, ironMiners: 0, lastIronAt: Date.now() } });
   statusTextEl.textContent = "Save reset. Your progress saves automatically on this device.";
   setActiveProgressTab("milestones");
   render();
+  if (typeof renderExploration === "function") renderExploration();
+  if (typeof renderCrafting === "function") renderCrafting();
   saveGame();
 }
 
@@ -412,6 +496,10 @@ buyTapUpgradeButton.addEventListener("click", buyTapUpgrade);
 buyMinerButton.addEventListener("click", buyMiner);
 resetButton.addEventListener("click", resetGame);
 refreshMilestonesButton.addEventListener("click", refreshMilestones);
+ironMinerMinusButton.addEventListener("click", () => assignIronMiners(game.workers.ironMiners - 1));
+ironMinerPlusButton.addEventListener("click", () => assignIronMiners(game.workers.ironMiners + 1));
+ironMinerMaxButton.addEventListener("click", () => assignIronMiners(game.miners));
+allGoldMinersButton.addEventListener("click", () => assignIronMiners(0));
 milestonesTab.addEventListener("click", () => setActiveProgressTab("milestones"));
 rewardsTab.addEventListener("click", () => setActiveProgressTab("rewards"));
 
@@ -422,9 +510,11 @@ render();
 saveGame();
 
 setInterval(() => {
-  if (game.miners > 0) {
-    game.gold += game.miners;
-    game.lifetimeGold += game.miners;
+  processIronWorkers();
+  game = normalizeGameState(game);
+  if (game.workers.goldMiners > 0) {
+    game.gold += game.workers.goldMiners;
+    game.lifetimeGold += game.workers.goldMiners;
     checkMilestones();
     render();
   }
@@ -432,5 +522,7 @@ setInterval(() => {
 
 setInterval(saveGame, 5000);
 window.renderIronMining = renderIronMining;
+window.renderWorkers = renderWorkers;
+window.assignIronMiners = assignIronMiners;
 window.getIronPerTap = getIronPerTap;
 window.addEventListener("beforeunload", saveGame);

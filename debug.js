@@ -8,6 +8,7 @@ const DEBUG_DEFAULTS = {
   infiniteWood: false,
   infiniteStone: false,
   infiniteIron: false,
+  infiniteCoal: false,
   infiniteHide: false,
   infiniteLeather: false,
   unlockAllEquipment: false,
@@ -36,32 +37,8 @@ let debugStatusEl = null;
 let originalCraftItem = typeof window.craftItem === "function" ? window.craftItem : null;
 
 function ensureDebugState() {
-  game.debugSettings = {
-    ...DEBUG_DEFAULTS,
-    ...(game.debugSettings || {})
-  };
-
-  game.resources = {
-    sticks: 0,
-    stonePebbles: 0,
-    ironOre: 0,
-    ironIngot: 0,
-    hide: 0,
-    leather: 0,
-    leatherBinding: 0,
-    ...(game.resources || {})
-  };
-
-  game.equipment = {
-    woodenPickaxe: 0,
-    woodenSword: 0,
-    woodenHoe: 0,
-    ironPickaxe: 0,
-    ironSword: 0,
-    ironHoe: 0,
-    equippedTool: null,
-    ...(game.equipment || {})
-  };
+  game = normalizeGameState(game);
+  game.debugSettings = { ...DEBUG_DEFAULTS, ...(game.debugSettings || {}) };
 }
 
 function setDebugStatus(message) {
@@ -144,17 +121,7 @@ function completeCurrentMilestones() {
 }
 
 function updateUnlockedAreaDisplay() {
-  document.querySelectorAll(".future-location").forEach((location) => {
-    const isForest = location.classList.contains("active");
-    const unlocked = Boolean(game.debugSettings.unlockAreas);
-    location.classList.toggle("locked", !isForest && !unlocked);
-    location.classList.toggle("debug-unlocked", !isForest && unlocked);
-
-    if (!isForest) {
-      const status = location.querySelector("span");
-      if (status) status.textContent = unlocked ? "Debug unlocked · gameplay coming later" : "Locked";
-    }
-  });
+  if (typeof renderExploration === "function") renderExploration();
 }
 
 function syncFreeCraftingButtons() {
@@ -168,30 +135,7 @@ function syncFreeCraftingButtons() {
 }
 
 function installFreeCraftingOverride() {
-  if (!originalCraftItem && typeof window.craftItem === "function") {
-    originalCraftItem = window.craftItem;
-  }
-
-  if (!originalCraftItem) return;
-
-  window.craftItem = function debugAwareCraftItem(recipeKey) {
-    ensureDebugState();
-
-    if (!game.debugSettings.freeCrafting) {
-      return originalCraftItem(recipeKey);
-    }
-
-    const recipe = craftingRecipes?.[recipeKey];
-    if (!recipe || !(recipeKey in game.equipment)) return;
-
-    game.equipment[recipeKey] += 1;
-    craftingElements.status.textContent = `Debug crafted ${recipe.name} for free.`;
-    if (typeof renderCrafting === "function") renderCrafting();
-    if (typeof renderIronMining === "function") renderIronMining();
-    syncFreeCraftingButtons();
-    if (typeof renderExploration === "function") renderExploration();
-    saveGame();
-  };
+  // Crafting, expedition upgrades, and furnace controls read Debug Free Crafting directly.
 }
 
 function applyDebugSettings(forceRender = false) {
@@ -209,6 +153,7 @@ function applyDebugSettings(forceRender = false) {
     infiniteWood: "sticks",
     infiniteStone: "stonePebbles",
     infiniteIron: ["ironOre", "ironIngot"],
+    infiniteCoal: "coal",
     infiniteHide: "hide",
     infiniteLeather: "leather"
   };
@@ -237,10 +182,24 @@ function applyDebugSettings(forceRender = false) {
 
   if (settings.completeMilestones) {
     changed = completeCurrentMilestones() || changed;
+    game.exploration.unlockedLocations.rockyTrail = true;
+    game.exploration.totalTrips = Math.max(game.exploration.totalTrips || 0, 50);
+    game.furnace.lifetimeBatches = Math.max(game.furnace.lifetimeBatches || 0, 25);
+    if (typeof checkExplorationMilestones === "function") checkExplorationMilestones();
   }
 
   if (settings.noCooldowns && game.exploration?.cooldownUntil) {
     game.exploration.cooldownUntil = 0;
+    changed = true;
+  }
+  if (settings.noCooldowns && game.furnace?.queuedBatches && typeof renderFurnace === "function") {
+    renderFurnace();
+    changed = true;
+  }
+  if (settings.unlockAreas) {
+    game.exploration.unlockedLocations.rockyTrail = true;
+    game.exploration.unlockedLocations.oldRuins = true;
+    game.exploration.unlockedLocations.snowfields = true;
     changed = true;
   }
 
@@ -252,6 +211,8 @@ function applyDebugSettings(forceRender = false) {
     if (typeof renderExploration === "function") renderExploration();
     if (typeof renderCrafting === "function") renderCrafting();
     if (typeof renderIronMining === "function") renderIronMining();
+    if (typeof renderWorkers === "function") renderWorkers();
+    if (typeof renderFurnace === "function") renderFurnace();
   }
 
   syncFreeCraftingButtons();
@@ -279,7 +240,9 @@ function spawnDebugLoot() {
     ironIngot: 3 + Math.floor(Math.random() * 12),
     hide: 5 + Math.floor(Math.random() * 21),
     leather: 5 + Math.floor(Math.random() * 21),
-    leatherBinding: 5 + Math.floor(Math.random() * 21)
+    leatherBinding: 5 + Math.floor(Math.random() * 21),
+    coal: 5 + Math.floor(Math.random() * 21),
+    locationClues: 1 + Math.floor(Math.random() * 3)
   };
 
   Object.entries(grants).forEach(([resource, amount]) => {
@@ -309,12 +272,13 @@ function activateDebugControls() {
     "Infinite Wood": "infiniteWood",
     "Infinite Stone": "infiniteStone",
     "Infinite Iron": "infiniteIron",
+    "Infinite Coal": "infiniteCoal",
     "Infinite Hide": "infiniteHide",
     "Infinite Leather": "infiniteLeather",
     "Unlock All Equipment": "unlockAllEquipment",
     "Max Tool Tier": "maxToolTier",
     "Complete Milestones": "completeMilestones",
-    "Unlock Areas": "unlockAreas",
+    "Unlock All Locations": "unlockAreas",
     "Free Crafting": "freeCrafting",
     "No Cooldowns": "noCooldowns"
   };
