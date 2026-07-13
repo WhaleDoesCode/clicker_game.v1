@@ -34,6 +34,11 @@ const buyTapUpgradeButton = document.getElementById("buyTapUpgrade");
 const buyMinerButton = document.getElementById("buyMiner");
 const resetButton = document.getElementById("resetButton");
 const refreshMilestonesButton = document.getElementById("refreshMilestonesButton");
+const mineIronButton = document.getElementById("mineIronButton");
+const ironOreCountEl = document.getElementById("ironOreCount");
+const ironIngotCountEl = document.getElementById("ironIngotCount");
+const ironPerTapEl = document.getElementById("ironPerTap");
+const ironMineStatusEl = document.getElementById("ironMineStatus");
 const milestonesTab = document.getElementById("milestonesTab");
 const rewardsTab = document.getElementById("rewardsTab");
 const milestonesPanel = document.getElementById("milestonesPanel");
@@ -98,6 +103,7 @@ function setActiveProgressTab(tabName) {
   checkMilestones();
   renderMilestones();
   renderPermanentRewards();
+  renderIronMining();
 }
 
 function setMilestoneProgress(key, current, target, unit) {
@@ -140,6 +146,50 @@ function renderPermanentRewards() {
   setRewardStatus("crewBoss");
 }
 
+function ensureIronState() {
+  game.resources = {
+    ironOre: 0,
+    ironIngot: 0,
+    ...(game.resources || {})
+  };
+
+  if (Number.isFinite(game.resources.iron) && !Number.isFinite(game.resources.ironOre)) {
+    game.resources.ironOre = game.resources.iron;
+  }
+
+  game.equipment = {
+    woodenPickaxe: 0,
+    ironPickaxe: 0,
+    equippedTool: null,
+    ...(game.equipment || {})
+  };
+}
+
+function ownsIronMiningPickaxe() {
+  ensureIronState();
+  return (game.equipment.woodenPickaxe || 0) > 0 || (game.equipment.ironPickaxe || 0) > 0;
+}
+
+function getIronPerTap() {
+  ensureIronState();
+  return game.equipment.equippedTool === "ironPickaxe" && (game.equipment.ironPickaxe || 0) > 0 ? 2 : 1;
+}
+
+function renderIronMining() {
+  ensureIronState();
+  const unlocked = ownsIronMiningPickaxe();
+  const yieldAmount = getIronPerTap();
+
+  ironOreCountEl.textContent = formatNumber(game.resources.ironOre);
+  ironIngotCountEl.textContent = formatNumber(game.resources.ironIngot);
+  ironPerTapEl.textContent = formatNumber(yieldAmount);
+  mineIronButton.disabled = !unlocked;
+  mineIronButton.textContent = unlocked ? "Mine Iron" : "Wooden Pickaxe Required";
+  ironMineStatusEl.textContent = unlocked
+    ? `Iron mine unlocked. ${yieldAmount === 2 ? "Iron Pickaxe equipped for +1 ore." : "Equip an Iron Pickaxe for 2 ore per tap."}`
+    : "Own a Wooden Pickaxe to unlock iron mining.";
+}
+
 function render() {
   goldEl.textContent = formatNumber(game.gold);
   goldPerSecondEl.textContent = formatNumber(game.miners);
@@ -154,6 +204,7 @@ function render() {
   buyMinerButton.disabled = game.gold < game.minerCost;
   renderMilestones();
   renderPermanentRewards();
+  renderIronMining();
 }
 
 function saveGame() {
@@ -267,6 +318,21 @@ function refreshMilestones() {
     : "Milestones refreshed. Everything is up to date.";
 }
 
+function mineIron() {
+  ensureIronState();
+  if (!ownsIronMiningPickaxe()) {
+    renderIronMining();
+    return;
+  }
+
+  const oreEarned = getIronPerTap();
+  game.resources.ironOre += oreEarned;
+  ironMineStatusEl.textContent = `Mined ${formatNumber(oreEarned)} iron ore.`;
+  render();
+  if (typeof renderCrafting === "function") renderCrafting();
+  saveGame();
+}
+
 function mineGold() {
   const isCritical = Math.random() < game.critChance;
   const multiplier = isCritical && Math.random() < 0.2 ? 10 : isCritical ? 5 : 1;
@@ -341,6 +407,7 @@ function resetGame() {
 }
 
 mineButton.addEventListener("click", mineGold);
+mineIronButton.addEventListener("click", mineIron);
 buyTapUpgradeButton.addEventListener("click", buyTapUpgrade);
 buyMinerButton.addEventListener("click", buyMiner);
 resetButton.addEventListener("click", resetGame);
@@ -364,4 +431,6 @@ setInterval(() => {
 }, 1000);
 
 setInterval(saveGame, 5000);
+window.renderIronMining = renderIronMining;
+window.getIronPerTap = getIronPerTap;
 window.addEventListener("beforeunload", saveGame);

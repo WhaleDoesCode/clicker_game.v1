@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="tabs.css">
   <link rel="stylesheet" href="explore.css">
-  <link rel="stylesheet" href="crafting.css">
+  <link rel="stylesheet" href="crafting.css?v=20260713-1">
   <link rel="stylesheet" href="farming.css?v=20260712-1">
   <link rel="stylesheet" href="debug.css?v=20260712-3">
 </head>
@@ -31,6 +31,17 @@
         <article class="upgrade-card"><div><p class="upgrade-label">Automatic Income</p><h2>Hire a Miner</h2><p>Each miner earns 1 gold every second.</p></div><button id="buyMiner" type="button">Buy for <span id="minerCostText">25</span> gold</button></article>
       </section>
       <section class="stats-card"><div><span>Tap power</span><strong id="tapPowerStat">1</strong></div><div><span>Miners</span><strong id="miners">0</strong></div><div><span>Critical chance</span><strong id="critChanceStat">10%</strong></div></section>
+      <section class="iron-mine-card" aria-live="polite">
+        <div class="iron-mine-heading"><div><p class="eyebrow">Resource Mining</p><h2>Iron Mine</h2></div><img src="assets/icons/iron_ore.png" alt="Iron ore"></div>
+        <p>Mine iron ore for smelting and iron tool recipes. Requires owning a Wooden Pickaxe or better.</p>
+        <div class="iron-resource-grid" aria-label="Iron inventory">
+          <article><img src="assets/icons/iron_ore.png" alt="Iron ore"><span>Iron Ore</span><strong id="ironOreCount">0</strong></article>
+          <article><img src="assets/icons/iron_ingot.png" alt="Iron ingot"><span>Iron Ingots</span><strong id="ironIngotCount">0</strong></article>
+        </div>
+        <button id="mineIronButton" type="button" disabled>Wooden Pickaxe Required</button>
+        <small id="ironMineStatus">Own a Wooden Pickaxe to unlock iron mining.</small>
+        <small>Yield: <span id="ironPerTap">1</span> iron ore per tap. Iron Pickaxe equipped: 2 per tap.</small>
+      </section>
       <section class="progress-card" aria-label="Progress and rewards">
         <div class="progress-tabs" role="tablist" aria-label="Progress views"><button id="milestonesTab" class="progress-tab active" type="button" role="tab" aria-selected="true" aria-controls="milestonesPanel">Milestones</button><button id="rewardsTab" class="progress-tab" type="button" role="tab" aria-selected="false" aria-controls="rewardsPanel">Permanent Rewards</button></div>
         <div id="milestonesPanel" class="tab-panel" role="tabpanel" aria-labelledby="milestonesTab"><div class="milestones-heading"><div><p class="eyebrow">Progress</p><h2>Milestones</h2></div><strong><span id="milestonesClaimed">0</span>/3</strong></div><div class="milestone-list">
@@ -44,7 +55,7 @@
     </section>
 
     <section id="farmingGamePanel" class="game-panel farming-panel" role="tabpanel" aria-labelledby="farmingGameTab" hidden>
-      <header><p class="eyebrow">Field Work</p><h1>Farming</h1><p class="subtitle">Use a Wooden Hoe to plant wheat, wait for it to grow, and harvest crops.</p></header>
+      <header><p class="eyebrow">Field Work</p><h1>Farming</h1><p class="subtitle">Use a Wooden Hoe to plant wheat, wait for it to grow, and harvest crops. Equip an Iron Hoe for larger harvests.</p></header>
       <section class="farming-summary" aria-label="Farming inventory and progress">
         <article><div class="crop-symbol" aria-hidden="true">🌾</div><div><span>Wheat</span><strong id="wheatCount">0</strong></div></article>
         <article><img src="assets/icons/wooden_hoe.png" alt="Wooden hoe"><div><span>Harvests</span><strong id="farmingHarvests">0</strong></div></article>
@@ -81,11 +92,19 @@
         <article><img src="assets/icons/hide.png" alt="Hide"><span>Hide</span><strong id="craftHideCount">0</strong></article>
         <article><img src="assets/icons/leather.png" alt="Leather"><span>Leather</span><strong id="craftLeatherCount">0</strong></article>
         <article><img src="assets/icons/leather_binding.png" alt="Leather binding"><span>Bindings</span><strong id="craftBindingCount">0</strong></article>
+        <article><img src="assets/icons/iron_ore.png" alt="Iron ore"><span>Iron Ore</span><strong id="craftIronOreCount">0</strong></article>
+        <article><img src="assets/icons/iron_ingot.png" alt="Iron ingot"><span>Iron Ingots</span><strong id="craftIronIngotCount">0</strong></article>
       </section>
       <section class="recipe-grid">
         <article class="recipe-card" data-recipe="woodenPickaxe"><div class="recipe-icon recipe-symbol" aria-hidden="true">⛏️</div><div><h2>Wooden Pickaxe</h2><p>Basic mining tool. Crafting unlocks it for equipment use.</p><small id="woodenPickaxeRequirements">Requires 4 sticks and 6 stone pebbles.</small></div><strong>Owned: <span id="woodenPickaxeOwned">0</span></strong><button id="craftWoodenPickaxe" type="button">Craft Wooden Pickaxe</button><button id="equipWoodenPickaxe" class="equip-button" type="button">Equip</button></article>
         <article class="recipe-card" data-recipe="woodenSword"><img class="recipe-icon" src="assets/icons/wooden_sword.png" alt="Wooden sword"><div><h2>Wooden Sword</h2><p>Starter weapon for the future Combat tab.</p><small id="woodenSwordRequirements">Requires 5 sticks and 2 stone pebbles.</small></div><strong>Owned: <span id="woodenSwordOwned">0</span></strong><button id="craftWoodenSword" type="button">Craft Wooden Sword</button><button id="equipWoodenSword" class="equip-button" type="button">Equip</button></article>
         <article class="recipe-card" data-recipe="woodenHoe"><img class="recipe-icon" src="assets/icons/wooden_hoe.png" alt="Wooden hoe"><div><h2>Wooden Hoe</h2><p>Starter farming tool for planting and harvesting wheat.</p><small id="woodenHoeRequirements">Requires 4 sticks, 3 stone pebbles, and 1 hide.</small></div><strong>Owned: <span id="woodenHoeOwned">0</span></strong><button id="craftWoodenHoe" type="button">Craft Wooden Hoe</button><button id="equipWoodenHoe" class="equip-button" type="button">Equip</button></article>
+        <article class="recipe-card" data-recipe="hideToLeather"><img class="recipe-icon" src="assets/icons/leather.png" alt="Leather"><div><h2>Process Leather</h2><p>Tan animal hide into crafting leather.</p><small id="hideToLeatherRequirements">Requires 2 hide.</small></div><strong>Output: 1 Leather</strong><button id="craftHideToLeather" type="button">Process Hide</button></article>
+        <article class="recipe-card" data-recipe="leatherBinding"><img class="recipe-icon" src="assets/icons/leather_binding.png" alt="Leather binding"><div><h2>Make Leather Binding</h2><p>Bind leather into tool-ready straps.</p><small id="leatherBindingRequirements">Requires 2 leather.</small></div><strong>Output: 1 Binding</strong><button id="craftLeatherBinding" type="button">Make Binding</button></article>
+        <article class="recipe-card" data-recipe="ironIngot"><img class="recipe-icon" src="assets/icons/iron_ingot.png" alt="Iron ingot"><div><h2>Smelt Iron Ingot</h2><p>Smelt iron ore into ingots for stronger tools.</p><small id="ironIngotRequirements">Requires 3 iron ore.</small></div><strong>Output: 1 Iron Ingot</strong><button id="craftIronIngot" type="button">Smelt Iron</button></article>
+        <article class="recipe-card" data-recipe="ironPickaxe"><div class="recipe-icon recipe-symbol" aria-hidden="true">⛏️</div><div><h2>Iron Pickaxe</h2><p>Improves iron mining to 2 ore per tap while equipped.</p><small id="ironPickaxeRequirements">Requires 4 iron ingots, 2 sticks, and 1 leather binding.</small></div><strong>Owned: <span id="ironPickaxeOwned">0</span></strong><button id="craftIronPickaxe" type="button">Craft Iron Pickaxe</button><button id="equipIronPickaxe" class="equip-button" type="button">Equip</button></article>
+        <article class="recipe-card" data-recipe="ironSword"><img class="recipe-icon" src="assets/icons/iron_sword.png" alt="Iron sword"><div><h2>Iron Sword</h2><p>Prepared for future Combat systems.</p><small id="ironSwordRequirements">Requires 3 iron ingots, 2 sticks, and 1 leather binding.</small></div><strong>Owned: <span id="ironSwordOwned">0</span></strong><button id="craftIronSword" type="button">Craft Iron Sword</button><button id="equipIronSword" class="equip-button" type="button">Equip</button></article>
+        <article class="recipe-card" data-recipe="ironHoe"><img class="recipe-icon" src="assets/icons/iron_hoe.png" alt="Iron hoe"><div><h2>Iron Hoe</h2><p>Harvest 5–9 wheat while equipped.</p><small id="ironHoeRequirements">Requires 2 iron ingots, 3 sticks, and 1 leather binding.</small></div><strong>Owned: <span id="ironHoeOwned">0</span></strong><button id="craftIronHoe" type="button">Craft Iron Hoe</button><button id="equipIronHoe" class="equip-button" type="button">Equip</button></article>
       </section>
     </section>
 
@@ -105,11 +124,11 @@
       </section>
     </section>
   </main>
-  <script src="script.js"></script>
+  <script src="script.js?v=20260713-1"></script>
   <script src="tabs.js?v=20260712-3"></script>
   <script src="explore.js"></script>
-  <script src="crafting.js"></script>
-  <script src="farming.js?v=20260712-1"></script>
-  <script src="debug.js?v=20260712-5"></script>
+  <script src="crafting.js?v=20260713-1"></script>
+  <script src="farming.js?v=20260713-1"></script>
+  <script src="debug.js?v=20260713-1"></script>
 </body>
 </html>

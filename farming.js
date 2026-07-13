@@ -40,7 +40,11 @@ function ensureFarmingState() {
 }
 
 function ownsWoodenHoe() {
-  return (game.equipment?.woodenHoe || 0) > 0;
+  return (game.equipment?.woodenHoe || 0) > 0 || (game.equipment?.ironHoe || 0) > 0;
+}
+
+function ironHoeHarvestBonusActive() {
+  return game.equipment?.equippedTool === "ironHoe" && (game.equipment?.ironHoe || 0) > 0;
 }
 
 function farmingNoCooldownsEnabled() {
@@ -86,7 +90,9 @@ function renderFarming() {
 
   farmingElements.wheat.textContent = formatNumber(game.resources.wheat);
   farmingElements.harvests.textContent = formatNumber(game.farming.harvests);
-  farmingElements.hoeStatus.textContent = hasHoe ? "Wooden Hoe ready" : "Wooden Hoe required";
+  farmingElements.hoeStatus.textContent = hasHoe
+    ? `${ironHoeHarvestBonusActive() ? "Iron Hoe equipped · harvests 5–9 wheat" : "Wooden Hoe ready · harvests 3–6 wheat"}`
+    : "Wooden Hoe required";
   farmingElements.hoeStatus.classList.toggle("ready", hasHoe);
 
   farmingElements.plot.classList.toggle("growing", hasCrop && !ready);
@@ -137,7 +143,9 @@ function harvestWheat() {
   ensureFarmingState();
   if (!cropIsReady()) return;
 
-  const amount = 3 + Math.floor(Math.random() * 4);
+  const amount = ironHoeHarvestBonusActive()
+    ? 5 + Math.floor(Math.random() * 5)
+    : 3 + Math.floor(Math.random() * 4);
   game.resources.wheat += amount;
   game.farming.harvests += 1;
   game.farming.crop = null;
