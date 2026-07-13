@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#111827">
   <title>Clicker Game</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=20260713-2">
   <link rel="stylesheet" href="tabs.css">
-  <link rel="stylesheet" href="explore.css">
-  <link rel="stylesheet" href="crafting.css?v=20260713-1">
+  <link rel="stylesheet" href="explore.css?v=20260713-2">
+  <link rel="stylesheet" href="crafting.css?v=20260713-2">
   <link rel="stylesheet" href="farming.css?v=20260712-1">
-  <link rel="stylesheet" href="debug.css?v=20260712-3">
+  <link rel="stylesheet" href="debug.css?v=20260713-2">
 </head>
 <body>
   <main class="game-shell">
@@ -31,6 +31,7 @@
         <article class="upgrade-card"><div><p class="upgrade-label">Automatic Income</p><h2>Hire a Miner</h2><p>Each miner earns 1 gold every second.</p></div><button id="buyMiner" type="button">Buy for <span id="minerCostText">25</span> gold</button></article>
       </section>
       <section class="stats-card"><div><span>Tap power</span><strong id="tapPowerStat">1</strong></div><div><span>Miners</span><strong id="miners">0</strong></div><div><span>Critical chance</span><strong id="critChanceStat">10%</strong></div></section>
+      <section class="worker-card" aria-live="polite"><div class="iron-mine-heading"><div><p class="eyebrow">Worker Assignment</p><h2>Mining Crew</h2></div><strong id="workerUnlockStatus">Gold only</strong></div><div class="worker-stats"><span>Total: <strong id="workerTotal">0</strong></span><span>Gold miners: <strong id="goldMinersCount">0</strong></span><span>Iron miners: <strong id="ironMinersCount">0</strong></span><span>Gold/sec: <strong id="workerGoldRate">0</strong></span><span>Iron rate: <strong id="workerIronRate">0</strong></span></div><div class="worker-controls"><button id="ironMinerMinus" type="button">-1 Iron</button><button id="ironMinerPlus" type="button">+1 Iron</button><button id="ironMinerMax" type="button">Max Iron</button><button id="allGoldMiners" type="button">All Gold</button></div></section>
       <section class="iron-mine-card" aria-live="polite">
         <div class="iron-mine-heading"><div><p class="eyebrow">Resource Mining</p><h2>Iron Mine</h2></div><img src="assets/icons/iron_ore.png" alt="Iron ore"></div>
         <p>Mine iron ore for smelting and iron tool recipes. Requires owning a Wooden Pickaxe or better.</p>
@@ -72,15 +73,23 @@
     </section>
 
     <section id="exploringGamePanel" class="game-panel explore-panel" role="tabpanel" aria-labelledby="exploringGameTab" hidden>
-      <header><p class="eyebrow">Gathering Grounds</p><h1>Exploring</h1><p class="subtitle">Search the Forest for basic materials and clues to new locations.</p></header>
+      <header><p class="eyebrow">Gathering Grounds</p><h1>Exploring</h1><p class="subtitle">Search the Forest for materials and clues, then push into the Rocky Trail for ore and coal.</p></header>
       <section class="explore-inventory" aria-label="Exploration inventory">
         <article><img src="assets/icons/sticks.png" alt="Sticks"><div><span>Sticks</span><strong id="sticksCount">0</strong></div></article>
         <article><img src="assets/icons/stone_pebbles.png" alt="Stone pebbles"><div><span>Stone Pebbles</span><strong id="stonePebblesCount">0</strong></div></article>
         <article><img src="assets/icons/hide.png" alt="Hide"><div><span>Hide</span><strong id="hideCount">0</strong></div></article>
+        <article><div class="resource-symbol" aria-hidden="true">◼</div><div><span>Coal</span><strong id="coalCount">0</strong></div></article>
+        <article><div class="resource-symbol" aria-hidden="true">🧭</div><div><span>Location Clues</span><strong id="locationCluesCount">0</strong></div></article>
       </section>
-      <section class="location-card"><div class="location-heading"><div><p class="eyebrow">Current Location</p><h2>Forest</h2></div><strong><span id="explorationTrips">0</span> trips</strong></div><p>Common finds: sticks and stone pebbles. Animal hide is uncommon, and some trips return empty-handed.</p><button id="exploreButton" class="explore-button" type="button">Explore the Forest</button><small id="exploreCooldownText">Ready to explore.</small></section>
+      <section class="location-card"><div class="location-heading"><div><p class="eyebrow">Selected Location</p><h2>Expedition</h2></div><strong><span id="explorationTrips">0</span> trips</strong></div><p>Choose an unlocked destination. One shared timestamp cooldown keeps expeditions refresh-safe.</p><button id="exploreButton" class="explore-button" type="button">Explore the Forest</button><small id="exploreCooldownText">Ready to explore.</small></section>
+      <section class="future-locations" aria-label="Exploration locations"><button class="future-location active" data-location="forest" type="button"><strong>Forest</strong><span>Available now</span></button><button class="future-location locked" data-location="rockyTrail" type="button"><strong>Rocky Trail</strong><span>Clues: 0/3 · Forest trips: 0/12</span></button><button class="future-location locked" data-location="oldRuins" type="button"><strong>Old Ruins</strong><span>Locked</span></button><button class="future-location locked" data-location="snowfields" type="button"><strong>Snowfields</strong><span>Locked</span></button></section>
+      <section class="expedition-card"><div class="location-heading"><div><p class="eyebrow">Expedition Upgrades</p><h2>Trail Gear</h2></div></div><div class="expedition-grid">
+        <article class="expedition-upgrade"><strong>Compass <span data-upgrade-level>0/3</span></strong><small data-upgrade-effect>-0% Nothing</small><small data-upgrade-cost>Next cost</small><button data-expedition-upgrade="compass" type="button">Upgrade</button></article>
+        <article class="expedition-upgrade"><strong>Trail Boots <span data-upgrade-level>0/3</span></strong><small data-upgrade-effect>0% faster cooldown</small><small data-upgrade-cost>Next cost</small><button data-expedition-upgrade="trailBoots" type="button">Upgrade</button></article>
+        <article class="expedition-upgrade"><strong>Backpack <span data-upgrade-level>0/3</span></strong><small data-upgrade-effect>0% double haul</small><small data-upgrade-cost>Next cost</small><button data-expedition-upgrade="backpack" type="button">Upgrade</button></article>
+      </div></section>
+      <section class="expedition-card"><p class="eyebrow">Trail Milestones</p><div class="milestone-list compact"><article class="milestone-item" data-trail-milestone="trailFinder"><strong>Trail Finder</strong><span>Unlock Rocky Trail · Reward: +5% exploration luck</span><small>0/1</small></article><article class="milestone-item" data-trail-milestone="trailVeteran"><strong>Trail Veteran</strong><span>Complete 50 total trips · Reward: -10% cooldown</span><small>0/50</small></article><article class="milestone-item" data-trail-milestone="ironworker"><strong>Ironworker</strong><span>Smelt 25 furnace batches · Reward: 10% bonus ingot chance</span><small>0/25</small></article></div></section>
       <section class="explore-log-card" aria-live="polite"><div class="location-heading"><div><p class="eyebrow">Recent Finds</p><h2>Travel Log</h2></div></div><ol id="exploreLog" class="explore-log"><li>The trail is waiting.</li></ol></section>
-      <section class="future-locations" aria-label="Future exploration locations"><article class="future-location active"><strong>Forest</strong><span>Available now</span></article><article class="future-location locked"><strong>Rocky Trail</strong><span>Locked</span></article><article class="future-location locked"><strong>Old Ruins</strong><span>Locked</span></article><article class="future-location locked"><strong>Snowfields</strong><span>Locked</span></article></section>
     </section>
 
     <section id="craftingGamePanel" class="game-panel crafting-panel" role="tabpanel" aria-labelledby="craftingGameTab" hidden>
@@ -94,14 +103,16 @@
         <article><img src="assets/icons/leather_binding.png" alt="Leather binding"><span>Bindings</span><strong id="craftBindingCount">0</strong></article>
         <article><img src="assets/icons/iron_ore.png" alt="Iron ore"><span>Iron Ore</span><strong id="craftIronOreCount">0</strong></article>
         <article><img src="assets/icons/iron_ingot.png" alt="Iron ingot"><span>Iron Ingots</span><strong id="craftIronIngotCount">0</strong></article>
+        <article><div class="recipe-icon recipe-symbol" aria-hidden="true">◼</div><span>Coal</span><strong id="craftCoalCount">0</strong></article>
       </section>
+      <section class="furnace-card" aria-live="polite"><div class="iron-mine-heading"><div><p class="eyebrow">Processing</p><h2>Furnace</h2></div><strong id="furnaceLevel">Locked</strong></div><p id="furnaceStatus">Own a pickaxe and 5 stone pebbles to discover furnace plans.</p><div class="worker-stats"><span>Queue: <strong id="furnaceQueue">0/0</strong></span><span>Time remaining: <strong id="furnaceTimeRemaining">Ready</strong></span><span>Lifetime batches: <strong id="furnaceLifetime">0</strong></span></div><button id="buildFurnace" type="button">Build Furnace</button><button id="upgradeFurnace" type="button">Upgrade Furnace</button><button id="queueFurnaceBatch" type="button">Queue 1 Batch</button><button id="queueFurnaceMax" type="button">Queue Max</button><small>Recipe: 3 iron ore + 1 coal -> 1 iron ingot. Ironworker adds a 10% bonus ingot chance.</small></section>
       <section class="recipe-grid">
         <article class="recipe-card" data-recipe="woodenPickaxe"><div class="recipe-icon recipe-symbol" aria-hidden="true">⛏️</div><div><h2>Wooden Pickaxe</h2><p>Basic mining tool. Crafting unlocks it for equipment use.</p><small id="woodenPickaxeRequirements">Requires 4 sticks and 6 stone pebbles.</small></div><strong>Owned: <span id="woodenPickaxeOwned">0</span></strong><button id="craftWoodenPickaxe" type="button">Craft Wooden Pickaxe</button><button id="equipWoodenPickaxe" class="equip-button" type="button">Equip</button></article>
         <article class="recipe-card" data-recipe="woodenSword"><img class="recipe-icon" src="assets/icons/wooden_sword.png" alt="Wooden sword"><div><h2>Wooden Sword</h2><p>Starter weapon for the future Combat tab.</p><small id="woodenSwordRequirements">Requires 5 sticks and 2 stone pebbles.</small></div><strong>Owned: <span id="woodenSwordOwned">0</span></strong><button id="craftWoodenSword" type="button">Craft Wooden Sword</button><button id="equipWoodenSword" class="equip-button" type="button">Equip</button></article>
         <article class="recipe-card" data-recipe="woodenHoe"><img class="recipe-icon" src="assets/icons/wooden_hoe.png" alt="Wooden hoe"><div><h2>Wooden Hoe</h2><p>Starter farming tool for planting and harvesting wheat.</p><small id="woodenHoeRequirements">Requires 4 sticks, 3 stone pebbles, and 1 hide.</small></div><strong>Owned: <span id="woodenHoeOwned">0</span></strong><button id="craftWoodenHoe" type="button">Craft Wooden Hoe</button><button id="equipWoodenHoe" class="equip-button" type="button">Equip</button></article>
         <article class="recipe-card" data-recipe="hideToLeather"><img class="recipe-icon" src="assets/icons/leather.png" alt="Leather"><div><h2>Process Leather</h2><p>Tan animal hide into crafting leather.</p><small id="hideToLeatherRequirements">Requires 2 hide.</small></div><strong>Output: 1 Leather</strong><button id="craftHideToLeather" type="button">Process Hide</button></article>
         <article class="recipe-card" data-recipe="leatherBinding"><img class="recipe-icon" src="assets/icons/leather_binding.png" alt="Leather binding"><div><h2>Make Leather Binding</h2><p>Bind leather into tool-ready straps.</p><small id="leatherBindingRequirements">Requires 2 leather.</small></div><strong>Output: 1 Binding</strong><button id="craftLeatherBinding" type="button">Make Binding</button></article>
-        <article class="recipe-card" data-recipe="ironIngot"><img class="recipe-icon" src="assets/icons/iron_ingot.png" alt="Iron ingot"><div><h2>Smelt Iron Ingot</h2><p>Smelt iron ore into ingots for stronger tools.</p><small id="ironIngotRequirements">Requires 3 iron ore.</small></div><strong>Output: 1 Iron Ingot</strong><button id="craftIronIngot" type="button">Smelt Iron</button></article>
+                <article class="recipe-card disabled-recipe" data-recipe="ironIngot"><img class="recipe-icon" src="assets/icons/iron_ingot.png" alt="Iron ingot"><div><h2>Furnace Smelting</h2><p>Iron ingots now come from the Furnace queue instead of instant crafting.</p><small id="ironIngotRequirements">Build Furnace Level 1 to smelt 3 iron ore + 1 coal.</small></div><strong>Output: Furnace batch</strong><button id="craftIronIngot" type="button" disabled>Use Furnace</button></article>
         <article class="recipe-card" data-recipe="ironPickaxe"><div class="recipe-icon recipe-symbol" aria-hidden="true">⛏️</div><div><h2>Iron Pickaxe</h2><p>Improves iron mining to 2 ore per tap while equipped.</p><small id="ironPickaxeRequirements">Requires 4 iron ingots, 2 sticks, and 1 leather binding.</small></div><strong>Owned: <span id="ironPickaxeOwned">0</span></strong><button id="craftIronPickaxe" type="button">Craft Iron Pickaxe</button><button id="equipIronPickaxe" class="equip-button" type="button">Equip</button></article>
         <article class="recipe-card" data-recipe="ironSword"><img class="recipe-icon" src="assets/icons/iron_sword.png" alt="Iron sword"><div><h2>Iron Sword</h2><p>Prepared for future Combat systems.</p><small id="ironSwordRequirements">Requires 3 iron ingots, 2 sticks, and 1 leather binding.</small></div><strong>Owned: <span id="ironSwordOwned">0</span></strong><button id="craftIronSword" type="button">Craft Iron Sword</button><button id="equipIronSword" class="equip-button" type="button">Equip</button></article>
         <article class="recipe-card" data-recipe="ironHoe"><img class="recipe-icon" src="assets/icons/iron_hoe.png" alt="Iron hoe"><div><h2>Iron Hoe</h2><p>Harvest 5–9 wheat while equipped.</p><small id="ironHoeRequirements">Requires 2 iron ingots, 3 sticks, and 1 leather binding.</small></div><strong>Owned: <span id="ironHoeOwned">0</span></strong><button id="craftIronHoe" type="button">Craft Iron Hoe</button><button id="equipIronHoe" class="equip-button" type="button">Equip</button></article>
@@ -115,20 +126,20 @@
         <div class="debug-panel-header"><div><p class="eyebrow">Developer Tools</p><h2>Debug</h2></div><button id="debugCloseButton" class="debug-close-button" type="button">Close</button></div>
         <p>Controls are placeholders only. No debug setting is active yet.</p>
         <details class="debug-group"><summary>Resources</summary><div class="debug-options">
-          <label class="debug-option"><input type="checkbox" disabled><span>Infinite Gold</span><small>Coming soon</small></label><label class="debug-option"><input type="checkbox" disabled><span>Infinite Wood</span><small>Coming soon</small></label><label class="debug-option"><input type="checkbox" disabled><span>Infinite Stone</span><small>Coming soon</small></label><label class="debug-option"><input type="checkbox" disabled><span>Infinite Iron</span><small>Coming soon</small></label><label class="debug-option"><input type="checkbox" disabled><span>Infinite Hide</span><small>Coming soon</small></label><label class="debug-option"><input type="checkbox" disabled><span>Infinite Leather</span><small>Coming soon</small></label>
+          <label class="debug-option"><input type="checkbox" disabled><span>Infinite Gold</span><small>Coming soon</small></label><label class="debug-option"><input type="checkbox" disabled><span>Infinite Wood</span><small>Coming soon</small></label><label class="debug-option"><input type="checkbox" disabled><span>Infinite Stone</span><small>Coming soon</small></label><label class="debug-option"><input type="checkbox" disabled><span>Infinite Iron</span><small>Coming soon</small></label><label class="debug-option"><input type="checkbox" disabled><span>Infinite Coal</span><small>Coming soon</small></label><label class="debug-option"><input type="checkbox" disabled><span>Infinite Hide</span><small>Coming soon</small></label><label class="debug-option"><input type="checkbox" disabled><span>Infinite Leather</span><small>Coming soon</small></label>
         </div></details>
         <details class="debug-group"><summary>Equipment</summary><div class="debug-options"><label class="debug-option"><input type="checkbox" disabled><span>Unlock All Equipment</span><small>Coming soon</small></label><label class="debug-option"><input type="checkbox" disabled><span>Max Tool Tier</span><small>Coming soon</small></label></div></details>
-        <details class="debug-group"><summary>Progress</summary><div class="debug-options"><label class="debug-option"><input type="checkbox" disabled><span>Complete Milestones</span><small>Coming soon</small></label><label class="debug-option"><input type="checkbox" disabled><span>Unlock Areas</span><small>Coming soon</small></label></div></details>
+        <details class="debug-group"><summary>Progress</summary><div class="debug-options"><label class="debug-option"><input type="checkbox" disabled><span>Complete Milestones</span><small>Coming soon</small></label><label class="debug-option"><input type="checkbox" disabled><span>Unlock All Locations</span><small>Coming soon</small></label></div></details>
         <details class="debug-group"><summary>Economy</summary><div class="debug-options"><label class="debug-option"><input type="checkbox" disabled><span>Free Crafting</span><small>Coming soon</small></label><label class="debug-option"><input type="checkbox" disabled><span>No Cooldowns</span><small>Coming soon</small></label></div></details>
         <details class="debug-group"><summary>Testing</summary><div class="debug-options"><button class="debug-action" type="button" disabled>Save Game</button><button class="debug-action" type="button" disabled>Reload Game</button><button class="debug-action" type="button" disabled>Spawn Loot</button></div></details>
       </section>
     </section>
   </main>
-  <script src="script.js?v=20260713-1"></script>
+  <script src="script.js?v=20260713-2"></script>
   <script src="tabs.js?v=20260712-3"></script>
-  <script src="explore.js"></script>
-  <script src="crafting.js?v=20260713-1"></script>
+  <script src="explore.js?v=20260713-2"></script>
+  <script src="crafting.js?v=20260713-2"></script>
   <script src="farming.js?v=20260713-1"></script>
-  <script src="debug.js?v=20260713-1"></script>
+  <script src="debug.js?v=20260713-2"></script>
 </body>
 </html>
