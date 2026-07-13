@@ -29,6 +29,13 @@ const EXPEDITION_UPGRADES = {
   backpack: { name: "Backpack", costs: [{ sticks: 8, leather: 2 }, { sticks: 12, leather: 3, leatherBinding: 2 }, { sticks: 20, leather: 5, leatherBinding: 3, ironIngot: 2 }] }
 };
 
+const explorationResourceLabels = {
+  sticks: "sticks",
+  stonePebbles: "stone pebbles",
+  leather: "leather",
+  leatherBinding: "leather binding",
+  ironIngot: "iron ingots"
+};
 const locationNames = { forest: "Forest", rockyTrail: "Rocky Trail", oldRuins: "Old Ruins", snowfields: "Snowfields" };
 const sticksCountEl = document.getElementById("sticksCount");
 const stonePebblesCountEl = document.getElementById("stonePebblesCount");
@@ -77,7 +84,7 @@ function getCooldownRemaining() { return Math.max(0, game.exploration.cooldownUn
 function finishExplorationCooldown() { explorationCooldownTimer = null; game.exploration.cooldownUntil = 0; renderExploration(); saveGame(); }
 function canUnlockRockyTrail() { return game.resources.locationClues >= 3 && game.exploration.forestTrips >= 12; }
 function updateLocationUnlocks() { if (canUnlockRockyTrail()) game.exploration.unlockedLocations.rockyTrail = true; }
-function formatCost(cost) { return Object.entries(cost).map(([r,a]) => `${a} ${resourceLabels?.[r] || r}`).join(", "); }
+function formatCost(cost) { return Object.entries(cost).map(([r,a]) => `${a} ${explorationResourceLabels[r] || r}`).join(", "); }
 function canAfford(cost) { return explorationFreeCrafting() || Object.entries(cost).every(([r,a]) => (game.resources[r] || 0) >= a); }
 function renderExpeditionUpgrades() {
   upgradeButtons.forEach((button) => {
