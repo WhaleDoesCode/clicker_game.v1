@@ -44,7 +44,8 @@ function ensureDebugState() {
   game.resources = {
     sticks: 0,
     stonePebbles: 0,
-    iron: 0,
+    ironOre: 0,
+    ironIngot: 0,
     hide: 0,
     leather: 0,
     leatherBinding: 0,
@@ -55,6 +56,9 @@ function ensureDebugState() {
     woodenPickaxe: 0,
     woodenSword: 0,
     woodenHoe: 0,
+    ironPickaxe: 0,
+    ironSword: 0,
+    ironHoe: 0,
     equippedTool: null,
     ...(game.equipment || {})
   };
@@ -183,6 +187,7 @@ function installFreeCraftingOverride() {
     game.equipment[recipeKey] += 1;
     craftingElements.status.textContent = `Debug crafted ${recipe.name} for free.`;
     if (typeof renderCrafting === "function") renderCrafting();
+    if (typeof renderIronMining === "function") renderIronMining();
     syncFreeCraftingButtons();
     if (typeof renderExploration === "function") renderExploration();
     saveGame();
@@ -203,16 +208,19 @@ function applyDebugSettings(forceRender = false) {
   const resourceMappings = {
     infiniteWood: "sticks",
     infiniteStone: "stonePebbles",
-    infiniteIron: "iron",
+    infiniteIron: ["ironOre", "ironIngot"],
     infiniteHide: "hide",
     infiniteLeather: "leather"
   };
 
-  Object.entries(resourceMappings).forEach(([settingKey, resourceKey]) => {
-    if (settings[settingKey] && game.resources[resourceKey] < DEBUG_RESOURCE_FLOOR) {
-      game.resources[resourceKey] = DEBUG_RESOURCE_FLOOR;
-      changed = true;
-    }
+  Object.entries(resourceMappings).forEach(([settingKey, resourceKeys]) => {
+    const keys = Array.isArray(resourceKeys) ? resourceKeys : [resourceKeys];
+    keys.forEach((resourceKey) => {
+      if (settings[settingKey] && game.resources[resourceKey] < DEBUG_RESOURCE_FLOOR) {
+        game.resources[resourceKey] = DEBUG_RESOURCE_FLOOR;
+        changed = true;
+      }
+    });
   });
 
   if (settings.unlockAllEquipment) {
@@ -221,6 +229,10 @@ function applyDebugSettings(forceRender = false) {
 
   if (settings.maxToolTier) {
     changed = grantCurrentEquipment(DEBUG_MAX_CURRENT_EQUIPMENT) || changed;
+    if (game.equipment.equippedTool !== "ironPickaxe") {
+      game.equipment.equippedTool = "ironPickaxe";
+      changed = true;
+    }
   }
 
   if (settings.completeMilestones) {
@@ -239,6 +251,7 @@ function applyDebugSettings(forceRender = false) {
     if (typeof render === "function") render();
     if (typeof renderExploration === "function") renderExploration();
     if (typeof renderCrafting === "function") renderCrafting();
+    if (typeof renderIronMining === "function") renderIronMining();
   }
 
   syncFreeCraftingButtons();
@@ -262,7 +275,8 @@ function spawnDebugLoot() {
   const grants = {
     sticks: 25 + Math.floor(Math.random() * 76),
     stonePebbles: 25 + Math.floor(Math.random() * 76),
-    iron: 10 + Math.floor(Math.random() * 41),
+    ironOre: 10 + Math.floor(Math.random() * 41),
+    ironIngot: 3 + Math.floor(Math.random() * 12),
     hide: 5 + Math.floor(Math.random() * 21),
     leather: 5 + Math.floor(Math.random() * 21),
     leatherBinding: 5 + Math.floor(Math.random() * 21)
